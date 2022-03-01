@@ -24,10 +24,10 @@ from .const import DOMAIN
 # required.
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Add sensors for passed config_entry in HA."""
-    hub = hass.data[DOMAIN][config_entry.entry_id]
+    token = hass.data[DOMAIN][config_entry.entry_id]
 
     new_devices = []
-    for roller in hub.rollers:
+    for roller in token.rollers:
         new_devices.append(BatterySensor(roller))
         new_devices.append(IlluminanceSensor(roller))
     if new_devices:
@@ -59,8 +59,8 @@ class SensorBase(Entity):
     # If an entity is offline (return False), the UI will refelect this.
     @property
     def available(self) -> bool:
-        """Return True if roller and hub is available."""
-        return self._roller.online and self._roller.hub.online
+        """Return True if roller and token is available."""
+        return self._roller.online and self._roller.token.online
 
     async def async_added_to_hass(self):
         """Run when this Entity has been added to HA."""

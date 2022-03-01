@@ -27,12 +27,12 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Add cover for passed config_entry in HA."""
-    # The hub is loaded from the associated hass.data entry that was created in the
+    # The token is loaded from the associated hass.data entry that was created in the
     # __init__.async_setup_entry function
-    hub = hass.data[DOMAIN][config_entry.entry_id]
+    token = hass.data[DOMAIN][config_entry.entry_id]
 
     # Add all entities to HA
-    async_add_entities(HelloWorldCover(roller) for roller in hub.rollers)
+    async_add_entities(HelloWorldCover(roller) for roller in token.rollers)
 
 
 # This entire class could be written to extend a base class to ensure common attributes
@@ -109,18 +109,18 @@ class HelloWorldCover(CoverEntity):
             "name": self.name,
             "sw_version": self._roller.firmware_version,
             "model": self._roller.model,
-            "manufacturer": self._roller.hub.manufacturer,
+            "manufacturer": self._roller.token.manufacturer,
         }
 
     # This property is important to let HA know if this entity is online or not.
     # If an entity is offline (return False), the UI will refelect this.
     @property
     def available(self) -> bool:
-        """Return True if roller and hub is available."""
-        return self._roller.online and self._roller.hub.online
+        """Return True if roller and token is available."""
+        return self._roller.online and self._roller.token.online
 
     # The following properties are how HA knows the current state of the device.
-    # These must return a value from memory, not make a live query to the device/hub
+    # These must return a value from memory, not make a live query to the device/token
     # etc when called (hence they are properties). For a push based integration,
     # HA is notified of changes via the async_write_ha_state call. See the __init__
     # method for hos this is implemented in this example.

@@ -1,28 +1,28 @@
-"""A demonstration 'hub' that connects several devices."""
+"""A demonstration 'token' that connects several devices."""
 from __future__ import annotations
 
 # In a real implementation, this would be in an external library that's on PyPI.
 # The PyPI package needs to be included in the `requirements` section of manifest.json
 # See https://developers.home-assistant.io/docs/creating_integration_manifest
 # for more information.
-# This dummy hub always returns 3 rollers.
+# This dummy token always returns 3 rollers.
 import asyncio
 import random
 
 from homeassistant.core import HomeAssistant
 
 
-class Hub:
-    """Dummy hub for Hello World example."""
+class Token:
+    """Dummy token for Hello World example."""
 
     manufacturer = "Demonstration Corp"
 
-    def __init__(self, hass: HomeAssistant, host: str) -> None:
-        """Init dummy hub."""
-        self._host = host
+    def __init__(self, hass: HomeAssistant, name: str) -> None:
+        """Init dummy token."""
+        self._name = name
         self._hass = hass
-        self._name = host
-        self._id = host.lower()
+        self._name = name
+        self._id = name.lower()
         self.rollers = [
             Roller(f"{self._id}_1", f"{self._name} 1", self),
             Roller(f"{self._id}_2", f"{self._name} 2", self),
@@ -31,12 +31,12 @@ class Hub:
         self.online = True
 
     @property
-    def hub_id(self) -> str:
-        """ID for dummy hub."""
+    def token_id(self) -> str:
+        """ID for dummy token."""
         return self._id
 
     async def test_connection(self) -> bool:
-        """Test connectivity to the Dummy hub is OK."""
+        """Test connectivity to the Dummy token is OK."""
         await asyncio.sleep(1)
         return True
 
@@ -44,10 +44,10 @@ class Hub:
 class Roller:
     """Dummy roller (device for HA) for Hello World example."""
 
-    def __init__(self, rollerid: str, name: str, hub: Hub) -> None:
+    def __init__(self, rollerid: str, name: str, token: token) -> None:
         """Init dummy roller."""
         self._id = rollerid
-        self.hub = hub
+        self.token = token
         self.name = name
         self._callbacks = set()
         self._loop = asyncio.get_event_loop()

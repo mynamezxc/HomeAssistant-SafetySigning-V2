@@ -10,12 +10,12 @@ from homeassistant import config_entries, exceptions
 from homeassistant.core import HomeAssistant
 
 from .const import DOMAIN  # pylint:disable=unused-import
-from .hub import Hub
+from .token import Token
 
 _LOGGER = logging.getLogger(__name__)
 
 # This is the schema that used to display the UI to the user. This simple
-# schema has a single required host field, but it could include a number of fields
+# schema has a single required name field, but it could include a number of fields
 # such as username, password etc. See other components in the HA core code for
 # further examples.
 # Note the input displayed to the user will be translated. See the
@@ -26,7 +26,7 @@ _LOGGER = logging.getLogger(__name__)
 # (in square brackets), rather than the actual translated value. I did not attempt to
 # figure this out or look further into it.
 DATA_SCHEMA = vol.Schema({
-    ("host"): str
+    ("name"): str
 })
 
 
@@ -38,16 +38,16 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
     """
     # Validate the data can be used to set up a connection.
 
-    # This is a simple example to show an error in the UI for a short hostname
+    # This is a simple example to show an error in the UI for a short namename
     # The exceptions are defined at the end of this file, and are used in the
     # `async_step_user` method below.
-    if len(data["host"]) < 3:
-        raise InvalidHost
+    if len(data["name"]) < 3:
+        raise InvalidName
 
-    hub = Hub(hass, data["host"])
-    # The dummy hub provides a `test_connection` method to ensure it's working
+    token = Token(hass, data["name"])
+    # The dummy token provides a `test_connection` method to ensure it's working
     # as expected
-    result = await hub.test_connection()
+    result = await token.test_connection()
     if not result:
         # If there is an error, raise an exception to notify HA that there was a
         # problem. The UI will also show there was a problem
@@ -65,10 +65,10 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
     # InvalidAuth
 
     # Return info that you want to store in the config entry.
-    # "Title" is what is displayed to the user for this hub device
+    # "Title" is what is displayed to the user for this token device
     # It is stored internally in HA as part of the device config.
     # See `async_step_user` below for how this is used
-    return {"title": data["host"]}
+    return {"title": data["name"]}
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -77,7 +77,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
     # Pick one of the available connection classes in homeassistant/config_entries.py
     # This tells HA if it should be asking for updates, or it'll be notified of updates
-    # automatically. This example uses PUSH, as the dummy hub will notify HA of
+    # automatically. This example uses PUSH, as the dummy token will notify HA of
     # changes.
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
 
@@ -97,12 +97,12 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 return self.async_create_entry(title=info["title"], data=user_input)
             except CannotConnect:
                 errors["base"] = "cannot_connect"
-            except InvalidHost:
+            except InvalidName:
                 # The error string is set here, and should be translated.
                 # This example does not currently cover translations, see the
                 # comments on `DATA_SCHEMA` for further details.
-                # Set the error on the `host` field, not the entire form.
-                errors["host"] = "cannot_connect"
+                # Set the error on the `name` field, not the entire form.
+                errors["name"] = "cannot_connect"
             except Exception:  # pylint: disable=broad-except
                 _LOGGER.exception("Unexpected exception")
                 errors["base"] = "unknown"
@@ -117,5 +117,5 @@ class CannotConnect(exceptions.HomeAssistantError):
     """Error to indicate we cannot connect."""
 
 
-class InvalidHost(exceptions.HomeAssistantError):
-    """Error to indicate there is an invalid hostname."""
+class InvalidName(exceptions.HomeAssistantError):
+    """Error to indicate there is an invalid namename."""
