@@ -5,7 +5,7 @@ from __future__ import annotations
 # The PyPI package needs to be included in the `requirements` section of manifest.json
 # See https://developers.home-assistant.io/docs/creating_integration_manifest
 # for more information.
-# This dummy token always returns 3 rollers.
+# This dummy token always returns 1 cron.
 import asyncio
 import random
 
@@ -24,10 +24,8 @@ class Token:
         self._serial_number = serial_number
         self._hass = hass
         self._id = name.lower()
-        self.rollers = [
-            Roller(f"{self._id}_1", f"{self._name} 1", self),
-            Roller(f"{self._id}_2", f"{self._name} 2", self),
-            Roller(f"{self._id}_3", f"{self._name} 3", self),
+        self.crons = [
+            Crons(f"{self._id}_1", f"{self._name} 1", self),
         ]
         self.online = True
 
@@ -42,12 +40,12 @@ class Token:
         return True
 
 
-class Roller:
-    """Dummy roller (device for HA) for Hello World example."""
+class Crons:
+    """Dummy cron (device for HA) for Hello World example."""
 
-    def __init__(self, rollerid: str, name: str, token: token) -> None:
-        """Init dummy roller."""
-        self._id = rollerid
+    def __init__(self, cronid: str, name: str, token: token) -> None:
+        """Init dummy cron."""
+        self._id = cronid
         self.token = token
         self.name = name
         self.token_serial = token._token_serial
@@ -56,7 +54,7 @@ class Roller:
         self._loop = asyncio.get_event_loop()
         self._target_position = 100
         self._current_position = 100
-        # Reports if the roller is moving up or down.
+        # Reports if the cron is moving up or down.
         # >0 is up, <0 is down. This very much just for demonstration.
         self.moving = 0
 
@@ -65,13 +63,13 @@ class Roller:
         self.model = "Test Device"
 
     @property
-    def roller_id(self) -> str:
-        """Return ID for roller."""
+    def cron_id(self) -> str:
+        """Return ID for cron."""
         return self._id
 
     @property
     def position(self):
-        """Return position for roller."""
+        """Return position for cron."""
         return self._current_position
 
     async def set_position(self, position: int) -> None:
@@ -95,7 +93,7 @@ class Roller:
         await self.publish_updates()
 
     def register_callback(self, callback: Callable[[], None]) -> None:
-        """Register callback, called when Roller changes state."""
+        """Register callback, called when cron changes state."""
         self._callbacks.add(callback)
 
     def remove_callback(self, callback: Callable[[], None]) -> None:
@@ -112,8 +110,8 @@ class Roller:
 
     @property
     def online(self) -> float:
-        """Roller is online."""
-        # The dummy roller is offline about 10% of the time. Returns True if online,
+        """cron is online."""
+        # The dummy cron is offline about 10% of the time. Returns True if online,
         # False if offline.
         return random.random() > 0.1
 
