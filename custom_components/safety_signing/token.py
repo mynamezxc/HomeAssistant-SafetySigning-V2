@@ -17,10 +17,11 @@ class Token:
 
     manufacturer = "Demonstration Corp"
 
-    def __init__(self, hass: HomeAssistant, name: str, token_serial: str) -> None:
+    def __init__(self, hass: HomeAssistant, name: str, token_serial: str, serial_number: str) -> None:
         """Init dummy token."""
         self._name = name
         self._token_serial = token_serial
+        self._serial_number = serial_number
         self._hass = hass
         self._id = name.lower()
         self.rollers = [
