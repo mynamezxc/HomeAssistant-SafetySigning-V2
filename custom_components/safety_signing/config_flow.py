@@ -29,7 +29,6 @@ DATA_SCHEMA = vol.Schema(
     {
         ("host"): str,
         ("name"): str,
-        ("access_token"): dict,
         ("token_serial"): str,
         ("serial_number"): str,
         ("pin"): str
