@@ -12,7 +12,6 @@
             "user": {
                 "data": {
                     "name": "[%key:common::config_flow::data::name%]",
-                    "name": "[%key:common::config_flow::data::name%]",
                     "token_serial": "[%key:common::config_flow::data::token_serial%]",
                     "access_token": "[%key:common::config_flow::data::access_token%]",
                     "serial_number": "[%key:common::config_flow::data::serial_number%]",

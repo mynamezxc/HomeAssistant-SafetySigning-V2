@@ -65,6 +65,7 @@ class HelloWorldCover(CoverEntity):
         # is used as the device name for device screens in the UI. This name is used on
         # entity screens, and used to build the Entity ID that's used is automations etc.
         self._attr_name = self._roller.name
+        self._attr_token_serial = self._roller.token_serial
 
     async def async_added_to_hass(self) -> None:
         """Run when this Entity has been added to HA."""

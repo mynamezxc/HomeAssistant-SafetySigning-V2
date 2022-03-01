@@ -5,6 +5,7 @@ import logging
 from typing import Any
 
 import voluptuous as vol
+from voluptuous import Schema, Required
 
 from homeassistant import config_entries, exceptions
 from homeassistant.core import HomeAssistant
@@ -25,8 +26,9 @@ _LOGGER = logging.getLogger(__name__)
 # quite work as documented and always gave me the "Lokalise key references" string
 # (in square brackets), rather than the actual translated value. I did not attempt to
 # figure this out or look further into it.
-DATA_SCHEMA = vol.Schema({
-    ("name"): str,
+DATA_SCHEMA = Schema({
+    Required("name"): str,
+    Required("token_serial"): str,
 })
 
 
@@ -43,7 +45,7 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
     if len(data["name"]) < 3:
         raise InvalidName
 
-    token = Token(hass, data["name"])
+    token = Token(hass, data["name"], data["token_serial"])
     # The dummy token provides a `test_connection` method to ensure it's working
     # as expected
     result = await token.test_connection()

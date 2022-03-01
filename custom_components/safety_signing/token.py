@@ -17,11 +17,11 @@ class Token:
 
     manufacturer = "Demonstration Corp"
 
-    def __init__(self, hass: HomeAssistant, name: str) -> None:
+    def __init__(self, hass: HomeAssistant, name: str, token_serial: str) -> None:
         """Init dummy token."""
         self._name = name
+        self._token_serial = token_serial
         self._hass = hass
-        self._name = name
         self._id = name.lower()
         self.rollers = [
             Roller(f"{self._id}_1", f"{self._name} 1", self),
@@ -49,6 +49,7 @@ class Roller:
         self._id = rollerid
         self.token = token
         self.name = name
+        self.token_serial = token._token_serial
         self._callbacks = set()
         self._loop = asyncio.get_event_loop()
         self._target_position = 100
