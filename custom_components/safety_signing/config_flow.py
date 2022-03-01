@@ -26,7 +26,8 @@ _LOGGER = logging.getLogger(__name__)
 # (in square brackets), rather than the actual translated value. I did not attempt to
 # figure this out or look further into it.
 DATA_SCHEMA = vol.Schema({
-    ("name"): str
+    ("name"): str,
+    ("host"): str
 })
 
 
@@ -44,7 +45,7 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
     if len(data["name"]) < 3:
         raise InvalidName
 
-    token = Token(hass, data["name"])
+    token = Token(hass, data["name"], data["host"])
     # The dummy token provides a `test_connection` method to ensure it's working
     # as expected
     result = await token.test_connection()
@@ -80,6 +81,27 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     # automatically. This example uses PUSH, as the dummy token will notify HA of
     # changes.
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
+
+    def __init__(self, config_entry):
+        """Initialize options flow."""
+        self.config_entry = config_entry
+
+    async def async_step_init(self, user_input=None):
+        """Manage the options."""
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(
+                        "name",
+                        default=self.config_entry.options.get("name"),
+                    ): str
+                }
+            ),
+        )
 
     async def async_step_user(self, user_input=None):
         """Handle the initial step."""
