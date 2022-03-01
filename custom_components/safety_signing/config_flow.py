@@ -28,8 +28,8 @@ _LOGGER = logging.getLogger(__name__)
 # figure this out or look further into it.
 DATA_SCHEMA = Schema({
     Required("name"): str,
-    Required("serial_number"): str,
     Required("token_serial"): str,
+    Required("serial_number"): str,
 })
 
 

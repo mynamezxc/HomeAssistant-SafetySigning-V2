@@ -11,11 +11,11 @@
         "step": {
             "user": {
                 "data": {
-                    "name": "[%key:common::config_flow::data::name%]",
-                    "token_serial": "[%key:common::config_flow::data::token_serial%]",
-                    "access_token": "[%key:common::config_flow::data::access_token%]",
-                    "serial_number": "[%key:common::config_flow::data::serial_number%]",
-                    "pin": "[%key:common::config_flow::data::pin%]"
+                    "name": "Name",
+                    "token_serial": "Token serial",
+                    "access_token": "Google access token (JSON)",
+                    "serial_number": "Serial Number",
+                    "pin": "Pin code"
                 }
             }
         }
