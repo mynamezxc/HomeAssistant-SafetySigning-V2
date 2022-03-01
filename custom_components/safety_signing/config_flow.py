@@ -27,10 +27,10 @@ _LOGGER = logging.getLogger(__name__)
 # figure this out or look further into it.
 DATA_SCHEMA = vol.Schema(
     {
-        ("host"): str
+        vol.Required("host"): str
     },
     {
-        ("name"): str
+        vol.Required("name"): str
     }
 )
 
