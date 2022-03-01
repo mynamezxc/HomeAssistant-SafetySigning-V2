@@ -26,7 +26,8 @@ _LOGGER = logging.getLogger(__name__)
 # (in square brackets), rather than the actual translated value. I did not attempt to
 # figure this out or look further into it.
 DATA_SCHEMA = vol.Schema({
-    ("host"): str
+    ("host"): str,
+    ("name"): str
 })
 
 
