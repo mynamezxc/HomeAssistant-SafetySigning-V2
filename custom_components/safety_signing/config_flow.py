@@ -46,7 +46,7 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
     if len(data["name"]) < 3:
         raise InvalidName
 
-    token = Token(hass, data["name"], data["token_serial"])
+    token = Token(hass, data["name"], data["token_serial"], data["serial_number"])
     # The dummy token provides a `test_connection` method to ensure it's working
     # as expected
     result = await token.test_connection()

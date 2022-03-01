@@ -66,6 +66,7 @@ class HelloWorldCover(CoverEntity):
         # entity screens, and used to build the Entity ID that's used is automations etc.
         self._attr_name = self._roller.name
         self._attr_token_serial = self._roller.token_serial
+        self._attr_serial_number = self._roller.serial_number
 
     async def async_added_to_hass(self) -> None:
         """Run when this Entity has been added to HA."""

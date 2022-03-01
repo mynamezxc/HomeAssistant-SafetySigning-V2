@@ -51,6 +51,7 @@ class Roller:
         self.token = token
         self.name = name
         self.token_serial = token._token_serial
+        self.serial_number = token._serial_number
         self._callbacks = set()
         self._loop = asyncio.get_event_loop()
         self._target_position = 100
