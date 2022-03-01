@@ -27,8 +27,6 @@ _LOGGER = logging.getLogger(__name__)
 # figure this out or look further into it.
 DATA_SCHEMA = vol.Schema({
     ("name"): str,
-    ("host"): str,
-    ("token_serial"): str
 })
 
 
@@ -45,7 +43,7 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
     if len(data["name"]) < 3:
         raise InvalidName
 
-    token = Token(hass, data["name"], data["host"], data["token_serial"])
+    token = Token(hass, data["name"])
     # The dummy token provides a `test_connection` method to ensure it's working
     # as expected
     result = await token.test_connection()
