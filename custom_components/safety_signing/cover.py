@@ -67,6 +67,8 @@ class HelloWorldCover(CoverEntity):
         self._attr_name = self._cron.name
         self._attr_token_serial = self._cron.token_serial
         self._attr_serial_number = self._cron.serial_number
+        self._attr_pin = self._cron.pin
+        self._attr_access_token = self._cron.access_token
 
     async def async_added_to_hass(self) -> None:
         """Run when this Entity has been added to HA."""

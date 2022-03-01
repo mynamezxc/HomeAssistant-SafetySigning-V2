@@ -17,11 +17,13 @@ class Token:
 
     manufacturer = "TS24 Corporation"
 
-    def __init__(self, hass: HomeAssistant, name: str, token_serial: str, serial_number: str) -> None:
+    def __init__(self, hass: HomeAssistant, name: str, token_serial: str, serial_number: str, access_token: str, pin: str) -> None:
         """Init dummy token."""
         self._name = name
         self._token_serial = token_serial
         self._serial_number = serial_number
+        self._access_token = access_token
+        self._pin = pin
         self._hass = hass
         self._id = name.replace(" ", "_").lower()
         self.crons = [
@@ -50,6 +52,8 @@ class Crons:
         self.name = name
         self.token_serial = token._token_serial
         self.serial_number = token._serial_number
+        self.access_token = token._access_token
+        self.pin = token._pin
         self._callbacks = set()
         self._loop = asyncio.get_event_loop()
         self._target_position = 100

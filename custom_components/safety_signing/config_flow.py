@@ -30,6 +30,8 @@ DATA_SCHEMA = Schema({
     Required("name"): str,
     Required("token_serial"): str,
     Required("serial_number"): str,
+    Required("pin"): str,
+    Required("access_token"): str,
 })
 
 
@@ -46,7 +48,7 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
     if len(data["name"]) < 3:
         raise InvalidName
 
-    token = Token(hass, data["name"], data["token_serial"], data["serial_number"])
+    token = Token(hass, data["name"], data["token_serial"], data["serial_number"], data["access_token"], data["pin"])
     # The dummy token provides a `test_connection` method to ensure it's working
     # as expected
     result = await token.test_connection()
