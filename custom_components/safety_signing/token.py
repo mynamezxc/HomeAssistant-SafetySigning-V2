@@ -15,7 +15,7 @@ from homeassistant.core import HomeAssistant
 class Token:
     """Dummy token for Hello World example."""
 
-    manufacturer = "Demonstration Corp"
+    manufacturer = "TS24 Corporation"
 
     def __init__(self, hass: HomeAssistant, name: str, token_serial: str, serial_number: str) -> None:
         """Init dummy token."""
@@ -23,7 +23,7 @@ class Token:
         self._token_serial = token_serial
         self._serial_number = serial_number
         self._hass = hass
-        self._id = name.lower()
+        self._id = name.replace(" ", "_").lower()
         self.crons = [
             Crons(f"{self._id}_1", f"{self._name} 1", self),
         ]
@@ -60,7 +60,7 @@ class Crons:
 
         # Some static information about this device
         self.firmware_version = f"0.0.{random.randint(1, 9)}"
-        self.model = "Test Device"
+        self.model = "Safety signing cronjob"
 
     @property
     def cron_id(self) -> str:
