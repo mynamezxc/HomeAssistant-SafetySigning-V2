@@ -4,8 +4,11 @@
       "user": {
         "data": {
           "host": "[%key:common::config_flow::data::host%]",
-          "username": "[%key:common::config_flow::data::username%]",
-          "password": "[%key:common::config_flow::data::password%]"
+          "name": "[%key:common::config_flow::data::name%]",
+          "access_token": "[%key:common::config_flow::data::access_token%]",
+          "token_serial": "[%key:common::config_flow::data::token_serial%]",
+          "serial_number": "[%key:common::config_flow::data::serial_number%]",
+          "pin": "[%key:common::config_flow::data::pin%]"
         }
       }
     },
