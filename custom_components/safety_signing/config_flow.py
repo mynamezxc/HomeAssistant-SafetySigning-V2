@@ -25,27 +25,47 @@ _LOGGER = logging.getLogger(__name__)
 # quite work as documented and always gave me the "Lokalise key references" string
 # (in square brackets), rather than the actual translated value. I did not attempt to
 # figure this out or look further into it.
-DATA_SCHEMA = vol.Schema(
-    {
-        ("host"): str,
-        ("name"): str,
-        ("token_serial"): str,
-        ("serial_number"): str,
-        ("pin"): str
-    }
-)
+DATA_SCHEMA = vol.Schema({("host"): str})
+
 
 async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
     """Validate the user input allows us to connect.
 
     Data has the keys from DATA_SCHEMA with values provided by the user.
     """
-    if len(data["token_serial"]) < 5 or len(data["serial_number"]) <= 5:
-        raise InvalidSerial
-    if 5 >= len(data["pin"]) >= 8:
-        raise InvalidPin
+    # Validate the data can be used to set up a connection.
 
-    return {"title": data["name"]}
+    # This is a simple example to show an error in the UI for a short hostname
+    # The exceptions are defined at the end of this file, and are used in the
+    # `async_step_user` method below.
+    if len(data["host"]) < 3:
+        raise InvalidHost
+
+    hub = Hub(hass, data["host"])
+    # The dummy hub provides a `test_connection` method to ensure it's working
+    # as expected
+    result = await hub.test_connection()
+    if not result:
+        # If there is an error, raise an exception to notify HA that there was a
+        # problem. The UI will also show there was a problem
+        raise CannotConnect
+
+    # If your PyPI package is not built with async, pass your methods
+    # to the executor:
+    # await hass.async_add_executor_job(
+    #     your_validate_func, data["username"], data["password"]
+    # )
+
+    # If you cannot connect:
+    # throw CannotConnect
+    # If the authentication is wrong:
+    # InvalidAuth
+
+    # Return info that you want to store in the config entry.
+    # "Title" is what is displayed to the user for this hub device
+    # It is stored internally in HA as part of the device config.
+    # See `async_step_user` below for how this is used
+    return {"title": data["host"]}
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -72,15 +92,14 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 info = await validate_input(self.hass, user_input)
 
                 return self.async_create_entry(title=info["title"], data=user_input)
-            except InvalidSerial:
+            except CannotConnect:
+                errors["base"] = "cannot_connect"
+            except InvalidHost:
                 # The error string is set here, and should be translated.
                 # This example does not currently cover translations, see the
                 # comments on `DATA_SCHEMA` for further details.
                 # Set the error on the `host` field, not the entire form.
-                errors["token_serial"] = "Invalid token or serial number"
-                errors["serial_number"] = "Invalid token or serial number"
-            except InvalidPin:
-                errors["pin"] = "Invalid length of pin code"
+                errors["host"] = "cannot_connect"
             except Exception:  # pylint: disable=broad-except
                 _LOGGER.exception("Unexpected exception")
                 errors["base"] = "unknown"
@@ -94,9 +113,6 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 class CannotConnect(exceptions.HomeAssistantError):
     """Error to indicate we cannot connect."""
 
-class InvalidSerial(exceptions.HomeAssistantError):
-    """Error to indicate there is an invalid length of serial."""
 
-
-class InvalidPin(exceptions.HomeHomeAssistantError):
-    """Error to indicate there is an invalid pin code."""
+class InvalidHost(exceptions.HomeAssistantError):
+    """Error to indicate there is an invalid hostname."""
