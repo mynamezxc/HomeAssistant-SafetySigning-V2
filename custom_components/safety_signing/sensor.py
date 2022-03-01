@@ -10,7 +10,7 @@ import random
 from homeassistant.const import (
     ATTR_VOLTAGE,
     DEVICE_CLASS_BATTERY,
-    DEVICE_CLASS_ILLUMINANCE,
+    # DEVICE_CLASS_ILLUMINANCE,
     PERCENTAGE,
 )
 from homeassistant.helpers.entity import Entity
@@ -29,7 +29,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     new_devices = []
     for cron in token.crons:
         new_devices.append(BatterySensor(cron))
-        new_devices.append(IlluminanceSensor(cron))
+        # new_devices.append(IlluminanceSensor(cron))
     if new_devices:
         async_add_entities(new_devices)
 
@@ -110,23 +110,3 @@ class BatterySensor(SensorBase):
 
 # This is another sensor, but more simple compared to the battery above. See the
 # comments above for how each field works.
-class IlluminanceSensor(SensorBase):
-    """Representation of a Sensor."""
-
-    device_class = DEVICE_CLASS_ILLUMINANCE
-    _attr_unit_of_measurement = "lx"
-
-    def __init__(self, cron):
-        """Initialize the sensor."""
-        super().__init__(cron)
-        # As per the sensor, this must be a unique value within this domain. This is done
-        # by using the device ID, and appending "_battery"
-        self._attr_unique_id = f"{self._cron.cron_id}_illuminance"
-
-        # The name of the entity
-        self._attr_name = f"{self._cron.name} Illuminance"
-
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-        return self._cron.illuminance

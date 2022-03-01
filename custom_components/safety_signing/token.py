@@ -125,7 +125,7 @@ class Crons:
         """Return a random voltage roughly that of a 12v battery."""
         return round(random.random() * 3 + 10, 2)
 
-    @property
-    def illuminance(self) -> int:
-        """Return a sample illuminance in lux."""
-        return random.randint(0, 500)
+    # @property
+    # def illuminance(self) -> int:
+    #     """Return a sample illuminance in lux."""
+    #     return random.randint(0, 500)
