@@ -27,7 +27,11 @@ _LOGGER = logging.getLogger(__name__)
 # figure this out or look further into it.
 DATA_SCHEMA = vol.Schema(
     {
-        ("host"): str
+        "name": str,
+        "access_token": dict,
+        "token_serial": str,
+        "serial_number": str,
+        "pin": str
     }
 )
 
@@ -41,7 +45,7 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
     if 5 >= len(data["pin"]) >= 8:
         raise InvalidPin
 
-    return {"title": data["host"]}
+    return {"title": data["name"]}
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
