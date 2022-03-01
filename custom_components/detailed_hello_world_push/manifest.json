@@ -1,5 +1,5 @@
 {
-  "domain": "safety_signing",
+  "domain": "detailed_hello_world_push",
   "name": "Safety Signing token & cron management",
   "config_flow": true,
   "documentation": "https://www.home-assistant.io/integrations/detailed_hello_world_push",
