@@ -28,8 +28,6 @@ _LOGGER = logging.getLogger(__name__)
 DATA_SCHEMA = vol.Schema(
     {
         vol.Required("host"): str,
-        vol.Required("name"): str,
-        vol.Required("token_serial"): str
     }
 )
 
