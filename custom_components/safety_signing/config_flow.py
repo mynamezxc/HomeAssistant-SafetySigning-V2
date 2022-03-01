@@ -27,12 +27,7 @@ _LOGGER = logging.getLogger(__name__)
 # figure this out or look further into it.
 DATA_SCHEMA = vol.Schema(
     {
-        ("host"): str,
-        ("name"): str,
-        ("access_token"): dict,
-        ("token_serial"): str,
-        ("serial_number"): str,
-        ("pin"): str
+        ("host"): str
     }
 )
 
