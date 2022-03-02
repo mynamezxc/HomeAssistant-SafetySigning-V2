@@ -17,7 +17,17 @@ from homeassistant.const import (
 )
 from homeassistant.helpers.entity import Entity, ConfigType, StateType
 from .const import DOMAIN
+from typing import Any, Final, cast, final
+_LOGGER: Final = logging.getLogger(__name__)
 
+ATTR_LAST_RESET: Final = "last_reset"
+ATTR_STATE_CLASS: Final = "state_class"
+
+DOMAIN: Final = "sensor"
+
+ENTITY_ID_FORMAT: Final = DOMAIN + ".{}"
+
+SCAN_INTERVAL: Final = timedelta(seconds=30)
 
 # See cover.py for more details.
 # Note how both entities for each cron sensor (battry and illuminance) are added at
@@ -108,6 +118,7 @@ class BatterySensor(SensorBase):
 
     # The value of this sensor. As this is a DEVICE_CLASS_BATTERY, this value must be
     # the battery level as a percentage (between 0 and 100)
+    @final
     @property
     def state(self):
         device_class = self.device_class
