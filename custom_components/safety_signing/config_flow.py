@@ -30,8 +30,8 @@ DATA_SCHEMA = Schema({
     Required("name"): str,
     Required("token_serial"): str,
     Required("serial_number"): str,
-    Required("access_token"): str,
     Required("pin"): str,
+    Required("access_token"): str,
 })
 
 
