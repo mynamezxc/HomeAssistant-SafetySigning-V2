@@ -28,7 +28,7 @@ class Token:
         self._id = name.replace(" ", "_").lower()
         key = str(random.randint(11111111, 99999999))
         self.crons = [
-            Crons(f"{self._id}_"+key, f"{self._name} "+key, self),
+            Crons(f"{self._id}_"+key, f"{self._name}_"+key, self),
         ]
         self.online = True
 
