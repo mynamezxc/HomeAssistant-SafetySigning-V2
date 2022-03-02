@@ -97,7 +97,7 @@ class BatterySensor(SensorBase):
     # examples, see:
     # https://developers.home-assistant.io/docs/core/entity/sensor#available-device-classes
     _attr_unit_of_measurement = None
-    _attr_native_value: StateType | date | datetime = None
+    _attr_native_value: StateType | datetime = None
     def __init__(self, cron):
         """Initialize the sensor."""
         super().__init__(cron)
@@ -112,7 +112,7 @@ class BatterySensor(SensorBase):
         self._state = random.randint(0, 100)
 
     @property
-    def native_value(self) -> StateType | date | datetime:
+    def native_value(self) -> StateType | datetime:
         """Return the value reported by the sensor."""
         return self._attr_native_value
 
