@@ -68,6 +68,26 @@ class Crons:
         self.model = "Safety signing schedule action"
 
     @property
+    def get_name(self) -> str:
+        return self.name
+
+    @property
+    def get_token_serial(self) -> str:
+        return self.token_serial
+    
+    @property
+    def get_serial_number(self) -> str:
+        return self.serial_number
+    
+    @property
+    def get_access_token(self) -> str:
+        return self.access_token
+
+    @property
+    def get_pin(self) -> str:
+        return self.pin
+
+    @property
     def cron_id(self) -> str:
         """Return ID for cron."""
         return self._id
