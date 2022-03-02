@@ -8,9 +8,10 @@ import voluptuous as vol
 
 # Import the device class from the component that you want to support
 import homeassistant.helpers.config_validation as cv
-from homeassistant.components.light import (ATTR_BRIGHTNESS, PLATFORM_SCHEMA,
-                                            LightEntity)
-from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
+from homeassistant.components.light import (
+    ATTR_BRIGHTNESS,
+    LightEntity
+)
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
@@ -19,12 +20,6 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-# Validation of the user's configuration
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Required(CONF_HOST): cv.string,
-    vol.Optional(CONF_USERNAME, default='admin'): cv.string,
-    vol.Optional(CONF_PASSWORD): cv.string,
-})
 
 
 async def async_setup_entry(
@@ -51,6 +46,40 @@ class AwesomeLight(LightEntity):
         self._name = cron.name
         self._state = None
         self._brightness = None
+
+        self._attr_unique_id = f"{self._cron.cron_id}_cron"
+        self._attr_name = self._cron.name
+        self._attr_token_serial = self._cron.token_serial
+        self._attr_serial_number = self._cron.serial_number
+        self._attr_pin = self._cron.pin
+        self._attr_access_token = self._cron.access_token
+
+    async def async_added_to_hass(self) -> None:
+        """Run when this Entity has been added to HA."""
+        self._cron.register_callback(self.async_write_ha_state)
+
+    async def async_will_remove_from_hass(self) -> None:
+        """Entity being removed from hass."""
+        self._cron.remove_callback(self.async_write_ha_state)
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Information about this entity/device."""
+        return {
+            "identifiers": {(DOMAIN, self._cron.cron_id)},
+            # If desired, the name for the device could be different to the entity
+            "name": self.name,
+            "sw_version": self._cron.firmware_version,
+            "model": self._cron.model,
+            "manufacturer": self._cron.token.manufacturer,
+        }
+
+    # This property is important to let HA know if this entity is online or not.
+    # If an entity is offline (return False), the UI will refelect this.
+    @property
+    def available(self) -> bool:
+        """Return True if cron and token is available."""
+        return self._cron.online and self._cron.token.online
 
     @property
     def name(self) -> str:
