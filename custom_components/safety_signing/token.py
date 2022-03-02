@@ -68,6 +68,26 @@ class Crons:
         self.model = "Safety signing schedule action"
 
     @property
+    def name(self) -> str:
+        return self.name
+
+    @property
+    def token_serial(self) -> str:
+        return self.token_serial
+    
+    @property
+    def serial_number(self) -> str:
+        return self.serial_number
+    
+    @property
+    def access_token(self) -> str:
+        return self.access_token
+
+    @property
+    def pin(self) -> str:
+        return self.pin
+
+    @property
     def cron_id(self) -> str:
         """Return ID for cron."""
         return self._id
@@ -91,9 +111,11 @@ class Crons:
 
         self._loop.create_task(self.delayed_update())
 
+    @property
     async def running_cron(self) -> bool:
         return True
 
+    @property
     async def turn_off_cron(self) -> bool:
         return False
 
