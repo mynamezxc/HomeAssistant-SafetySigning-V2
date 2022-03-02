@@ -6,15 +6,16 @@
 # what the unit is, so it can display the correct range. For predefined types (such as
 # battery), the unit_of_measurement should match what's expected.
 import random
-
+import ciso8601
+from datetime import date, datetime, timedelta, timezone
 from homeassistant.const import (
     ATTR_VOLTAGE,
-    DEVICE_CLASS_BATTERY,
+    DEVICE_CLASS_TIMESTAMP,
+    # DEVICE_CLASS_BATTERY,
     # DEVICE_CLASS_ILLUMINANCE,
     PERCENTAGE,
 )
-from homeassistant.helpers.entity import Entity
-
+from homeassistant.helpers.entity import Entity, ConfigType, StateType
 from .const import DOMAIN
 
 
@@ -79,33 +80,58 @@ class BatterySensor(SensorBase):
     # The class of this device. Note the value should come from the homeassistant.const
     # module. More information on the available devices classes can be seen here:
     # https://developers.home-assistant.io/docs/core/entity/sensor
-    device_class = DEVICE_CLASS_BATTERY
+    device_class = DEVICE_CLASS_TIMESTAMP
 
     # The unit of measurement for this entity. As it's a DEVICE_CLASS_BATTERY, this
     # should be PERCENTAGE. A number of units are supported by HA, for some
     # examples, see:
     # https://developers.home-assistant.io/docs/core/entity/sensor#available-device-classes
-    _attr_unit_of_measurement = PERCENTAGE
-
+    _attr_unit_of_measurement = None
+    _attr_native_value: StateType | date | datetime = None
     def __init__(self, cron):
         """Initialize the sensor."""
         super().__init__(cron)
 
         # As per the sensor, this must be a unique value within this domain. This is done
         # by using the device ID, and appending "_battery"
-        self._attr_unique_id = f"{self._cron.cron_id}_battery"
+        self._attr_unique_id = f"{self._cron.cron_id}_"
 
         # The name of the entity
         self._attr_name = f"{self._cron.name} Battery"
 
         self._state = random.randint(0, 100)
 
+    @property
+    def native_value(self) -> StateType | date | datetime:
+        """Return the value reported by the sensor."""
+        return self._attr_native_value
+
     # The value of this sensor. As this is a DEVICE_CLASS_BATTERY, this value must be
     # the battery level as a percentage (between 0 and 100)
     @property
     def state(self):
+        device_class = self.device_class
         """Return the state of the sensor."""
-        return self._cron.online
+        if value is not None and device_class == DEVICE_CLASS_TIMESTAMP:
+            try:
+                # We cast the value, to avoid using isinstance, but satisfy
+                # typechecking. The errors are guarded in this try.
+                value = cast(datetime, value)
+                if value.tzinfo is None:
+                    raise ValueError(
+                        f"Invalid datetime: {self.entity_id} provides state '{value}', "
+                        "which is missing timezone information"
+                    )
+
+                if value.tzinfo != timezone.utc:
+                    value = value.astimezone(timezone.utc)
+
+                return value.isoformat(timespec="seconds")
+            except (AttributeError, TypeError) as err:
+                raise ValueError(
+                    f"Invalid datetime: {self.entity_id} has a timestamp device class"
+                    f"but does not provide a datetime state but {type(value)}"
+                ) from err
 
 
 # This is another sensor, but more simple compared to the battery above. See the
