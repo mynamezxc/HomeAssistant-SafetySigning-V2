@@ -12,6 +12,9 @@ from homeassistant.const import (
     DEVICE_CLASS_BATTERY,
     # DEVICE_CLASS_ILLUMINANCE,
     PERCENTAGE,
+    STATE_OFF,
+    STATE_ON,
+    DEVICE_CLASS_RUNNING,
 )
 from homeassistant.helpers.entity import Entity
 
@@ -79,13 +82,12 @@ class BatterySensor(SensorBase):
     # The class of this device. Note the value should come from the homeassistant.const
     # module. More information on the available devices classes can be seen here:
     # https://developers.home-assistant.io/docs/core/entity/sensor
-    device_class = DEVICE_CLASS_BATTERY
+    device_class = DEVICE_CLASS_RUNNING
 
     # The unit of measurement for this entity. As it's a DEVICE_CLASS_BATTERY, this
     # should be PERCENTAGE. A number of units are supported by HA, for some
     # examples, see:
     # https://developers.home-assistant.io/docs/core/entity/sensor#available-device-classes
-    _attr_unit_of_measurement = PERCENTAGE
 
     def __init__(self, cron):
         """Initialize the sensor."""
@@ -93,20 +95,26 @@ class BatterySensor(SensorBase):
 
         # As per the sensor, this must be a unique value within this domain. This is done
         # by using the device ID, and appending "_battery"
-        self._attr_unique_id = f"{self._cron.cron_id}_battery"
+        self._attr_unique_id = f"{self._cron.cron_id}_cron"
 
         # The name of the entity
-        self._attr_name = f"{self._cron.name} Battery"
+        self._attr_name = f"{self._cron.name} Cron"
 
-        self._state = random.randint(0, 100)
+        self._state = False
+        self._is_on = False
 
-    # The value of this sensor. As this is a DEVICE_CLASS_BATTERY, this value must be
-    # the battery level as a percentage (between 0 and 100)
     @property
-    def state(self):
-        """Return the state of the sensor."""
-        return self._cron.battery_level
+    def is_on(self):
+        """If the switch is currently on or off."""
+        return self._is_on
 
+    @property
+    def state(self) -> Literal["on", "off"] | None:
+        """Return the state of the binary sensor."""
+        is_on = self.is_on
+        if is_on is None:
+            return None
+        return STATE_ON if is_on else STATE_OFF
 
 # This is another sensor, but more simple compared to the battery above. See the
 # comments above for how each field works.
