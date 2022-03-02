@@ -18,6 +18,7 @@ import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity import Entity
 from homeassistant.components.switch import (
     SwitchEntity,
 )
@@ -43,7 +44,42 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     if new_devices:
         async_add_entities(new_devices)
 
-class SwitchCronJob(SwitchEntity):
+class SwitchBase(Entity):
+    """Base representation of a Hello World Sensor."""
+
+    should_poll = False
+
+    def __init__(self, cron):
+        """Initialize the sensor."""
+        self._cron = cron
+
+    # To link this entity to the cover device, this property must return an
+    # identifiers value matching that used in the cover, but no other information such
+    # as name. If name is returned, this entity will then also become a device in the
+    # HA UI.
+    @property
+    def device_info(self):
+        """Return information to link this entity with the correct device."""
+        return {"identifiers": {(DOMAIN, self._cron.cron_id)}}
+
+    # This property is important to let HA know if this entity is online or not.
+    # If an entity is offline (return False), the UI will refelect this.
+    @property
+    def available(self) -> bool:
+        """Return True if cron and token is available."""
+        return self._cron.online and self._cron.token.online
+
+    async def async_added_to_hass(self):
+        """Run when this Entity has been added to HA."""
+        # Sensors should also register callbacks to HA when their state changes
+        self._cron.register_callback(self.async_write_ha_state)
+
+    async def async_will_remove_from_hass(self):
+        """Entity being removed from hass."""
+        # The opposite of async_added_to_hass. Remove any registered call backs here.
+        self._cron.remove_callback(self.async_write_ha_state)
+
+class SwitchCronJob(SwitchBase):
     """Base class for switch entities."""
     device_class = DEVICE_CLASS_RUNNING
     _attr_is_on: bool | None = None
