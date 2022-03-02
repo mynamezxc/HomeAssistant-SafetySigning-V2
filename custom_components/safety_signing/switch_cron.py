@@ -22,11 +22,6 @@ from homeassistant.helpers.entity import Entity
 from homeassistant.components.switch import (
     SwitchEntity,
 )
-from homeassistant.const import (
-    STATE_OFF,
-    STATE_ON,
-    DEVICE_CLASS_RUNNING,
-)
 from .const import DOMAIN
 
 
@@ -44,44 +39,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     if new_devices:
         async_add_entities(new_devices)
 
-class SwitchBase(Entity):
-    """Base representation of a Hello World Sensor."""
-
-    should_poll = False
-
-    def __init__(self, cron):
-        """Initialize the sensor."""
-        self._cron = cron
-
-    # To link this entity to the cover device, this property must return an
-    # identifiers value matching that used in the cover, but no other information such
-    # as name. If name is returned, this entity will then also become a device in the
-    # HA UI.
-    @property
-    def device_info(self):
-        """Return information to link this entity with the correct device."""
-        return {"identifiers": {(DOMAIN, self._cron.cron_id)}}
-
-    # This property is important to let HA know if this entity is online or not.
-    # If an entity is offline (return False), the UI will refelect this.
-    @property
-    def available(self) -> bool:
-        """Return True if cron and token is available."""
-        return self._cron.online and self._cron.token.online
-
-    async def async_added_to_hass(self):
-        """Run when this Entity has been added to HA."""
-        # Sensors should also register callbacks to HA when their state changes
-        self._cron.register_callback(self.async_write_ha_state)
-
-    async def async_will_remove_from_hass(self):
-        """Entity being removed from hass."""
-        # The opposite of async_added_to_hass. Remove any registered call backs here.
-        self._cron.remove_callback(self.async_write_ha_state)
-
-class SwitchCronJob(SwitchBase):
+class SwitchCronJob(SwitchEntity):
     """Base class for switch entities."""
-    device_class = DEVICE_CLASS_RUNNING
     _attr_is_on: bool | None = None
     _attr_state: None = None
 
@@ -92,6 +51,13 @@ class SwitchCronJob(SwitchBase):
         self._attr_unique_id = f"{self._cron.cron_id}_cron"
         self._attr_name = f"{self._cron.name} Cron"
         self._is_on = False
+
+    async def async_added_to_hass(self) -> None:
+        self._cron.register_callback(self.async_write_ha_state)
+
+    async def async_will_remove_from_hass(self) -> None:
+        """Entity being removed from hass."""
+        self._cron.remove_callback(self.async_write_ha_state)
 
     @property
     def device_info(self) -> DeviceInfo:
@@ -131,23 +97,20 @@ class SwitchCronJob(SwitchBase):
         self._cron.turn_off_cron()
         self._is_on = False
 
-    async def async_turn_on(self, **kwargs):
-        self._cron.running_cron()
-        self._is_on = True
-        """Turn the entity on."""
+    # async def async_turn_on(self, **kwargs):
+    #     self._cron.running_cron()
+    #     self._is_on = True
+    #     """Turn the entity on."""
 
-    async def async_turn_off(self, **kwargs):
-        self._cron.turn_off_cron()
-        self._is_on = False
-        """Turn the entity off."""
+    # async def async_turn_off(self, **kwargs):
+    #     self._cron.turn_off_cron()
+    #     self._is_on = False
+    #     """Turn the entity off."""
 
     async def async_toggle(self, **kwargs):
         """Toggle the entity."""
 
     @property
-    def state(self) -> Literal["on", "off"] | None:
+    def state(self) -> bool:
         """Return the state of the binary sensor."""
-        is_on = self.is_on
-        if is_on is None:
-            return None
-        return STATE_ON if is_on else STATE_OFF
+        return self._is_on
