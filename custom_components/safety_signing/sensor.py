@@ -12,9 +12,6 @@ from homeassistant.const import (
     DEVICE_CLASS_BATTERY,
     # DEVICE_CLASS_ILLUMINANCE,
     PERCENTAGE,
-    STATE_OFF,
-    STATE_ON,
-    DEVICE_CLASS_RUNNING,
 )
 from homeassistant.helpers.entity import Entity
 
@@ -110,7 +107,6 @@ class BatterySensor(SensorBase):
         """Return the state of the sensor."""
         return self._cron.battery_level
 
-    
 
 # This is another sensor, but more simple compared to the battery above. See the
 # comments above for how each field works.
