@@ -82,12 +82,13 @@ class BatterySensor(SensorBase):
     # The class of this device. Note the value should come from the homeassistant.const
     # module. More information on the available devices classes can be seen here:
     # https://developers.home-assistant.io/docs/core/entity/sensor
-    device_class = DEVICE_CLASS_RUNNING
+    device_class = DEVICE_CLASS_BATTERY
 
     # The unit of measurement for this entity. As it's a DEVICE_CLASS_BATTERY, this
     # should be PERCENTAGE. A number of units are supported by HA, for some
     # examples, see:
     # https://developers.home-assistant.io/docs/core/entity/sensor#available-device-classes
+    _attr_unit_of_measurement = PERCENTAGE
 
     def __init__(self, cron):
         """Initialize the sensor."""
@@ -101,21 +102,26 @@ class BatterySensor(SensorBase):
         self._attr_name = f"{self._cron.name} Battery"
 
         self._state = random.randint(0, 100)
+        self._is_on = False
 
+    @property
+    def is_on(self):
+        """If the switch is currently on or off."""
+        return self._is_on
     # The value of this sensor. As this is a DEVICE_CLASS_BATTERY, this value must be
     # the battery level as a percentage (between 0 and 100)
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-        return self._cron.battery_level
-
     # @property
-    # def state(self) -> Literal["on", "off"] | None:
-    #     """Return the state of the binary sensor."""
-    #     is_on = self.is_on
-    #     if is_on is None:
-    #         return None
-    #     return STATE_ON if is_on else STATE_OFF
+    # def state(self):
+    #     """Return the state of the sensor."""
+    #     return self._cron.battery_level
+
+    @property
+    def state(self) -> Literal["on", "off"] | None:
+        """Return the state of the binary sensor."""
+        is_on = self.is_on
+        if is_on is None:
+            return None
+        return STATE_ON if is_on else STATE_OFF
 
 # This is another sensor, but more simple compared to the battery above. See the
 # comments above for how each field works.
