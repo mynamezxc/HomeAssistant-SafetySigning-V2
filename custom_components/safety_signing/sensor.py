@@ -95,26 +95,27 @@ class BatterySensor(SensorBase):
 
         # As per the sensor, this must be a unique value within this domain. This is done
         # by using the device ID, and appending "_battery"
-        self._attr_unique_id = f"{self._cron.cron_id}_cron"
+        self._attr_unique_id = f"{self._cron.cron_id}_battery"
 
         # The name of the entity
-        self._attr_name = f"{self._cron.name} Cron"
+        self._attr_name = f"{self._cron.name} Battery"
 
-        self._state = False
-        self._is_on = False
+        self._state = random.randint(0, 100)
 
+    # The value of this sensor. As this is a DEVICE_CLASS_BATTERY, this value must be
+    # the battery level as a percentage (between 0 and 100)
     @property
-    def is_on(self):
-        """If the switch is currently on or off."""
-        return self._is_on
+    def state(self):
+        """Return the state of the sensor."""
+        return self._cron.battery_level
 
-    @property
-    def state(self) -> Literal["on", "off"] | None:
-        """Return the state of the binary sensor."""
-        is_on = self.is_on
-        if is_on is None:
-            return None
-        return STATE_ON if is_on else STATE_OFF
+    # @property
+    # def state(self) -> Literal["on", "off"] | None:
+    #     """Return the state of the binary sensor."""
+    #     is_on = self.is_on
+    #     if is_on is None:
+    #         return None
+    #     return STATE_ON if is_on else STATE_OFF
 
 # This is another sensor, but more simple compared to the battery above. See the
 # comments above for how each field works.
