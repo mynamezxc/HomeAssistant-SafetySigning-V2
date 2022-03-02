@@ -45,22 +45,9 @@ class SwitchCronJob(SwitchEntity):
         """Initialize the sensor."""
         super().__init__(cron)
         self._cron = cron
-        # As per the sensor, this must be a unique value within this domain. This is done
-        # by using the device ID, and appending "_battery"
         self._attr_unique_id = f"{self._cron.cron_id}_cron"
-        # The name of the entity
         self._attr_name = f"{self._cron.name} Cron"
         self._is_on = False
-
-    @property
-    def device_info(self):
-        """Return information to link this entity with the correct device."""
-        return {"identifiers": {(DOMAIN, self._cron.cron_id)}}
-
-    @property
-    def available(self) -> bool:
-        """Return True if cron and token is available."""
-        return self._cron.online and self._cron.token.online
 
     @property
     def is_on(self):
