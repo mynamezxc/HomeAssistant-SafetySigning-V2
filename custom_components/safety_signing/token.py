@@ -91,6 +91,12 @@ class Crons:
 
         self._loop.create_task(self.delayed_update())
 
+    async def running_cron(self) -> bool:
+        return True
+
+    async def turn_off_cron(self) -> bool:
+        return False
+
     async def delayed_update(self) -> None:
         """Publish updates, with a random delay to emulate interaction with device."""
         await asyncio.sleep(random.randint(1, 10))
