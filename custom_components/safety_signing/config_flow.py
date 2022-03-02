@@ -51,27 +51,15 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
     token = Token(hass, data["name"], data["token_serial"], data["serial_number"], data["access_token"], data["pin"])
     # The dummy token provides a `test_connection` method to ensure it's working
     # as expected
+
+    return {"title": data["name"]}
+
     result = await token.test_connection()
     if not result:
         # If there is an error, raise an exception to notify HA that there was a
         # problem. The UI will also show there was a problem
         raise CannotConnect
 
-    # If your PyPI package is not built with async, pass your methods
-    # to the executor:
-    # await hass.async_add_executor_job(
-    #     your_validate_func, data["username"], data["password"]
-    # )
-
-    # If you cannot connect:
-    # throw CannotConnect
-    # If the authentication is wrong:
-    # InvalidAuth
-
-    # Return info that you want to store in the config entry.
-    # "Title" is what is displayed to the user for this token device
-    # It is stored internally in HA as part of the device config.
-    # See `async_step_user` below for how this is used
     return {"title": data["name"]}
 
 
