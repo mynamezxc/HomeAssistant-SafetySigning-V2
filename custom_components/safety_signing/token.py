@@ -26,8 +26,9 @@ class Token:
         self._pin = pin
         self._hass = hass
         self._id = name.replace(" ", "_").lower()
+        key = random.randint(11111111, 99999999)
         self.crons = [
-            Crons(f"{self._id}_1", f"{self._name} 1", self),
+            Crons(f"{self._id}_"+key, f"{self._name} {key}", self),
         ]
         self.online = True
 

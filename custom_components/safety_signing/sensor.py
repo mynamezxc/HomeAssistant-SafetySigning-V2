@@ -105,7 +105,7 @@ class BatterySensor(SensorBase):
     @property
     def state(self):
         """Return the state of the sensor."""
-        return self._cron.battery_level
+        return self._cron.online
 
 
 # This is another sensor, but more simple compared to the battery above. See the
