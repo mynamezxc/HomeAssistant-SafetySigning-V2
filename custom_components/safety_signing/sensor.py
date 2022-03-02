@@ -102,12 +102,7 @@ class BatterySensor(SensorBase):
         self._attr_name = f"{self._cron.name} Battery"
 
         self._state = random.randint(0, 100)
-        self._is_on = False
 
-    @property
-    def is_on(self):
-        """If the switch is currently on or off."""
-        return self._is_on
     # The value of this sensor. As this is a DEVICE_CLASS_BATTERY, this value must be
     # the battery level as a percentage (between 0 and 100)
     @property
