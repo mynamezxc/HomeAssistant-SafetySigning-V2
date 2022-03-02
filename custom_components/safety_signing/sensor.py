@@ -96,7 +96,7 @@ class BatterySensor(SensorBase):
     # should be PERCENTAGE. A number of units are supported by HA, for some
     # examples, see:
     # https://developers.home-assistant.io/docs/core/entity/sensor#available-device-classes
-    _attr_unit_of_measurement = None
+    # _attr_unit_of_measurement = None
     _attr_native_value: StateType | datetime = None
     def __init__(self, cron):
         """Initialize the sensor."""
