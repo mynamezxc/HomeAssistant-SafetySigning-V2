@@ -21,6 +21,11 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.components.switch import (
     SwitchEntity,
 )
+from homeassistant.const import (
+    STATE_OFF,
+    STATE_ON,
+    DEVICE_CLASS_RUNNING,
+)
 from .const import DOMAIN
 
 
@@ -40,6 +45,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
 class SwitchCronJob(SwitchEntity):
     """Base class for switch entities."""
+    device_class = DEVICE_CLASS_RUNNING
+    _attr_is_on: bool | None = None
+    _attr_state: None = None
 
     def __init__(self, cron):
         """Initialize the sensor."""
@@ -80,3 +88,11 @@ class SwitchCronJob(SwitchEntity):
 
     async def async_toggle(self, **kwargs):
         """Toggle the entity."""
+
+    @property
+    def state(self) -> Literal["on", "off"] | None:
+        """Return the state of the binary sensor."""
+        is_on = self.is_on
+        if is_on is None:
+            return None
+        return STATE_ON if is_on else STATE_OFF
