@@ -1,4 +1,4 @@
-# Examples of Home Assistant custom config
+# SafetySigning schedule option
 
 Home Assistant can be extended in many different ways. This repository contains a collection of examples how to customize Home Assistant. This repository is organized like your config directory, copying any file to your config directory in the same path as it is in this repo will allow you to use it. Refer to the header of each example for further instructions how to get started.
 
