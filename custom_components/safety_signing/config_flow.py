@@ -52,8 +52,6 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
     # The dummy token provides a `test_connection` method to ensure it's working
     # as expected
 
-    return {"title": data["name"]}
-
     result = await token.test_connection()
     if not result:
         # If there is an error, raise an exception to notify HA that there was a
