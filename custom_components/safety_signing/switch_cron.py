@@ -28,16 +28,18 @@ from .const import DOMAIN
 # This function is called as part of the __init__.async_setup_entry (via the
 # hass.config_entries.async_forward_entry_setup call)
 
-async def async_setup_entry(hass, config_entry, async_add_entities):
-    """Add sensors for passed config_entry in HA."""
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Add cover for passed config_entry in HA."""
+    # The token is loaded from the associated hass.data entry that was created in the
+    # __init__.async_setup_entry function
     token = hass.data[DOMAIN][config_entry.entry_id]
 
-    new_devices = []
-    for cron in token.crons:
-        new_devices.append(SwitchCronJob(cron))
-        # new_devices.append(IlluminanceSensor(cron))
-    if new_devices:
-        async_add_entities(new_devices)
+    # Add all entities to HA
+    async_add_entities(SwitchCronJob(cron) for cron in token.crons)
 
 class SwitchCronJob(SwitchEntity):
     """Base class for switch entities."""
