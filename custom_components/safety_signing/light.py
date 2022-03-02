@@ -31,7 +31,7 @@ def async_setup_entry(hass, config_entry, async_add_entities) -> None:
 
     new_devices = []
     for cron in token.crons:
-        new_devices.append(SwitchCronJob(cron))
+        new_devices.append(AwesomeLight(cron))
         # new_devices.append(IlluminanceSensor(cron))
     if new_devices:
         async_add_entities(new_devices)
@@ -40,10 +40,11 @@ def async_setup_entry(hass, config_entry, async_add_entities) -> None:
 class AwesomeLight(LightEntity):
     """Representation of an Awesome Light."""
 
-    def __init__(self, light) -> None:
+    def __init__(self, cron) -> None:
         """Initialize an AwesomeLight."""
-        self._light = light
-        self._name = light.name
+        self._cron = cron
+        self._light = cron
+        self._name = cron.name
         self._state = None
         self._brightness = None
 
