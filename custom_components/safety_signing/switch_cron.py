@@ -94,6 +94,25 @@ class SwitchCronJob(SwitchBase):
         self._is_on = False
 
     @property
+    def device_info(self) -> DeviceInfo:
+        """Information about this entity/device."""
+        return {
+            "identifiers": {(DOMAIN, self._cron.cron_id)},
+            # If desired, the name for the device could be different to the entity
+            "name": self.name,
+            "sw_version": self._cron.firmware_version,
+            "model": self._cron.model,
+            "manufacturer": self._cron.token.manufacturer,
+        }
+
+    # This property is important to let HA know if this entity is online or not.
+    # If an entity is offline (return False), the UI will refelect this.
+    @property
+    def available(self) -> bool:
+        """Return True if cron and token is available."""
+        return self._cron.online and self._cron.token.online
+
+    @property
     def is_on(self):
         """If the switch is currently on or off."""
         return self._is_on
