@@ -18,6 +18,12 @@ from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 from homeassistant.config_entries import ConfigEntry
 from .const import DOMAIN
 
+from homeassistant.helpers.device_registry import DeviceEntryType
+from homeassistant.components.sensor import SensorEntity, SensorStateClass
+from homeassistant.const import ATTR_ATTRIBUTION
+from homeassistant.helpers.entity import DeviceInfo
+ATTRIBUTION = "Api provided by TS24 Corp"
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -33,88 +39,62 @@ async def async_setup_entry(
     token = hass.data[DOMAIN][config_entry.entry_id]
 
     # Add all entities to HA
-    async_add_entities(AwesomeLight(cron) for cron in token.crons)
+    async_add_entities(WebServiceSensor(cron) for cron in token.crons)
 
 
-class AwesomeLight(LightEntity):
-    """Representation of an Awesome Light."""
+class WebServiceSensor(SensorEntity):
+    """Representation of a Coinbase.com sensor."""
 
-    def __init__(self, cron) -> None:
-        """Initialize an AwesomeLight."""
+    def __init__(self, cron):
+        """Initialize the sensor."""
         self._cron = cron
-        self._light = cron
-        self._name = cron.name
-        self._state = None
-        self._brightness = None
-
         self._attr_unique_id = f"{self._cron.cron_id}_cron"
-        self._attr_name = self._cron.name
-        self._attr_token_serial = self._cron.token_serial
-        self._attr_serial_number = self._cron.serial_number
-        self._attr_pin = self._cron.pin
-        self._attr_access_token = self._cron.access_token
-
-    async def async_added_to_hass(self) -> None:
-        """Run when this Entity has been added to HA."""
-        self._cron.register_callback(self.async_write_ha_state)
-
-    async def async_will_remove_from_hass(self) -> None:
-        """Entity being removed from hass."""
-        self._cron.remove_callback(self.async_write_ha_state)
-
-    @property
-    def device_info(self) -> DeviceInfo:
-        """Information about this entity/device."""
-        return {
-            "identifiers": {(DOMAIN, self._cron.cron_id)},
-            # If desired, the name for the device could be different to the entity
-            "name": self.name,
-            "sw_version": self._cron.firmware_version,
-            "model": self._cron.model,
-            "manufacturer": self._cron.token.manufacturer,
-        }
-
-    # This property is important to let HA know if this entity is online or not.
-    # If an entity is offline (return False), the UI will refelect this.
-    @property
-    def available(self) -> bool:
-        """Return True if cron and token is available."""
-        return self._cron.online and self._cron.token.online
+        self._attr_name = f"{self._cron.name} Cron"
+        self._is_on = False
+        self._state = 0
+        self._unit_of_measurement = "time"
+        self._attr_state_class = SensorStateClass.MEASUREMENT
+        self._attr_device_info = DeviceInfo(
+            configuration_url="http://localhost:3000/api/",
+            entry_type=DeviceEntryType.SERVICE,
+            identifiers={(DOMAIN, self._cron.cron_id)},
+            manufacturer="TS24 Corp",
+            name=f"{self._cron.name}",
+        )
 
     @property
-    def name(self) -> str:
-        """Return the display name of this light."""
+    def name(self):
+        """Return the name of the sensor."""
         return self._name
 
     @property
-    def brightness(self):
-        """Return the brightness of the light.
-        This method is optional. Removing it indicates to Home Assistant
-        that brightness is not supported for this light.
-        """
-        return self._brightness
+    def unique_id(self):
+        """Return the unique ID of the sensor."""
+        return self._id
 
     @property
-    def is_on(self) -> bool | None:
-        """Return true if light is on."""
+    def native_value(self):
+        """Return the state of the sensor."""
         return self._state
 
-    def turn_on(self, **kwargs) -> None:
-        """Instruct the light to turn on.
-        You can skip the brightness part if your light does not support
-        brightness control.
-        """
-        self._light.brightness = kwargs.get(ATTR_BRIGHTNESS, 255)
-        self._light.turn_on()
+    @property
+    def native_unit_of_measurement(self):
+        """Return the unit of measurement this sensor expresses itself in."""
+        return self._unit_of_measurement
 
-    def turn_off(self, **kwargs) -> None:
-        """Instruct the light to turn off."""
-        self._light.turn_off()
+    @property
+    def icon(self):
+        """Return the icon to use in the frontend, if any."""
+        return "mdi:axis-z-arrow"
 
-    def update(self) -> None:
-        """Fetch new state data for this light.
-        This is the only method that should fetch new data for Home Assistant.
-        """
-        self._light.update()
-        self._state = self._light.is_on()
-        self._brightness = self._light.brightness
+    @property
+    def extra_state_attributes(self):
+        """Return the state attributes of the sensor."""
+        return {ATTR_ATTRIBUTION: ATTRIBUTION}
+
+    def update(self):
+        """Get the latest state of the sensor."""
+        self._coinbase_data.update()
+        self._state = round(
+            1 / float(self._coinbase_data.exchange_rates.rates[self.currency]), 2
+        )

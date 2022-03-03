@@ -90,12 +90,12 @@ class SwitchCronJob(SwitchEntity):
         """Name of the entity."""
         return self._cron.cron_id
 
-    async def turn_on(self, **kwargs):
+    async def async_turn_on(self, **kwargs):
         self._cron.running_cron()
         self._is_on = True
         """Turn the entity on."""
 
-    async def turn_off(self, **kwargs):
+    async def async_turn_off(self, **kwargs):
         self._cron.turn_off_cron()
         self._is_on = False
 
