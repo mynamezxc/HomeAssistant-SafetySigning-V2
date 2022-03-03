@@ -5,7 +5,9 @@
         "data": {
           "name": "Name",
           "token_serial": "Token serial",
-          "serial_number" : "Serial number"
+          "serial_number" : "Serial number",
+          "access_token": "Google access token (JSON)",
+          "pin": "Pin code"
         }
       }
     },
