@@ -51,25 +51,20 @@ class CronJobSensor(SensorEntity):
     def __init__(self, cron):
         """Initialize the sensor."""
         self._cron = cron
+        self._id = f"{self._cron.cron_id}_cronjob"
+        self._attr_name = f"{self._cron.name} CronJob"
         self._attr_unique_id = f"{self._cron.cron_id}_cronjob"
         self._attr_name = self._cron.name
         self._attr_token_serial = self._cron.token_serial
         self._attr_serial_number = self._cron.serial_number
         self._attr_pin = self._cron.pin
         self._attr_access_token = self._cron.access_token
-        self._attr_state_class = SensorStateClass.TOTAL
-        self._attr_device_info = DeviceInfo(
-            configuration_url="https://www.coinbase.com/settings/api",
-            entry_type=DeviceEntryType.SERVICE,
-            identifiers={(DOMAIN, self._cron.cron_id)},
-            manufacturer="TS24 Corp",
-            name=f"SafetySigning Cron {self._cron.cron_id}",
-        )
+        self._state = 1
 
     @property
     def name(self):
         """Return the name of the sensor."""
-        return self._name
+        return self._attr_name
 
     @property
     def unique_id(self):
@@ -81,22 +76,22 @@ class CronJobSensor(SensorEntity):
         """Return the state of the sensor."""
         return self._state
 
-    @property
-    def native_unit_of_measurement(self):
-        """Return the unit of measurement this sensor expresses itself in."""
-        return self._unit_of_measurement
+    # @property
+    # def native_unit_of_measurement(self):
+    #     """Return the unit of measurement this sensor expresses itself in."""
+    #     return self._unit_of_measurement
 
     @property
     def icon(self):
         """Return the icon to use in the frontend, if any."""
-        return CURRENCY_ICONS.get(self._unit_of_measurement, DEFAULT_COIN_ICON)
+        return "mdi:currency-btc"
 
     @property
     def extra_state_attributes(self):
         """Return the state attributes of the sensor."""
         return {
             ATTR_ATTRIBUTION: ATTRIBUTION,
-            ATTR_NATIVE_BALANCE: f"{self._native_balance} {self._native_currency}",
+            ATTR_NATIVE_BALANCE: "0.000",
         }
 
     def update(self):
