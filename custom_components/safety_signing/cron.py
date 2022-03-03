@@ -51,7 +51,7 @@ class CronJobSensor(SensorEntity):
     def __init__(self, cron):
         """Initialize the sensor."""
         self._cron = cron
-        self._attr_unique_id = f"{self._cron.cron_id}_cover"
+        self._attr_unique_id = f"{self._cron.cron_id}_cronjob"
         self._attr_name = self._cron.name
         self._attr_token_serial = self._cron.token_serial
         self._attr_serial_number = self._cron.serial_number
