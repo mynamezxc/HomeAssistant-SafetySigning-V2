@@ -61,9 +61,9 @@ class CronJobSensor(SensorEntity):
         self._attr_device_info = DeviceInfo(
             configuration_url="https://www.coinbase.com/settings/api",
             entry_type=DeviceEntryType.SERVICE,
-            identifiers={(DOMAIN, self._coinbase_data.user_id)},
-            manufacturer="Coinbase.com",
-            name=f"Coinbase {self._coinbase_data.user_id[-4:]}",
+            identifiers={(DOMAIN, self._cron.cron_id)},
+            manufacturer="TS24 Corp",
+            name=f"SafetySigning Cron {self._cron.cron_id}",
         )
 
     @property
