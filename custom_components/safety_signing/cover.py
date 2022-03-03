@@ -185,86 +185,86 @@ class HelloWorldCover(CoverEntity):
 
 
 # Validation of the user's configuration
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Required(CONF_HOST): cv.string,
-    vol.Optional(CONF_USERNAME, default='admin'): cv.string,
-    vol.Optional(CONF_PASSWORD): cv.string,
-})
+# PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
+#     vol.Required(CONF_HOST): cv.string,
+#     vol.Optional(CONF_USERNAME, default='admin'): cv.string,
+#     vol.Optional(CONF_PASSWORD): cv.string,
+# })
 
 
-def setup_platform(
-    hass: HomeAssistant,
-    config: ConfigType,
-    add_entities: AddEntitiesCallback,
-    discovery_info: DiscoveryInfoType | None = None
-) -> None:
-    """Set up the Awesome Light platform."""
-    # Assign configuration variables.
-    # The configuration check takes care they are present.
-    host = config[CONF_HOST]
-    username = config[CONF_USERNAME]
-    password = config.get(CONF_PASSWORD)
+# def setup_platform(
+#     hass: HomeAssistant,
+#     config: ConfigType,
+#     add_entities: AddEntitiesCallback,
+#     discovery_info: DiscoveryInfoType | None = None
+# ) -> None:
+#     """Set up the Awesome Light platform."""
+#     # Assign configuration variables.
+#     # The configuration check takes care they are present.
+#     host = config[CONF_HOST]
+#     username = config[CONF_USERNAME]
+#     password = config.get(CONF_PASSWORD)
 
-    # Setup connection with devices/cloud
-    hub = awesomelights.Hub(host, username, password)
+#     # Setup connection with devices/cloud
+#     hub = awesomelights.Hub(host, username, password)
 
-    # Verify that passed in configuration works
-    if not hub.is_valid_login():
-        _LOGGER.error("Could not connect to AwesomeLight hub")
-        return
+#     # Verify that passed in configuration works
+#     if not hub.is_valid_login():
+#         _LOGGER.error("Could not connect to AwesomeLight hub")
+#         return
 
-    # Add devices
-    add_entities(AwesomeLight(light) for light in hub.lights())
+#     # Add devices
+#     add_entities(AwesomeLight(light) for light in hub.lights())
 
 
-class AwesomeLight(LightEntity):
-    """Representation of an Awesome Light."""
+# class AwesomeLight(LightEntity):
+#     """Representation of an Awesome Light."""
 
-    def __init__(self, cron) -> None:
-        """Initialize an AwesomeLight."""
-        self._cron = cron
-        self._name = f"{self._cron.name} CronJob"
-        self._attr_unique_id = f"{self._cron.cron_id}_cron"
-        self._state = None
-        self._brightness = None
+#     def __init__(self, cron) -> None:
+#         """Initialize an AwesomeLight."""
+#         self._cron = cron
+#         self._name = f"{self._cron.name} CronJob"
+#         self._attr_unique_id = f"{self._cron.cron_id}_cron"
+#         self._state = None
+#         self._brightness = None
 
-    @property
-    def name(self) -> str:
-        """Return the display name of this light."""
-        return self._name
+#     @property
+#     def name(self) -> str:
+#         """Return the display name of this light."""
+#         return self._name
 
-    @property
-    def brightness(self):
-        """Return the brightness of the light.
+#     @property
+#     def brightness(self):
+#         """Return the brightness of the light.
 
-        This method is optional. Removing it indicates to Home Assistant
-        that brightness is not supported for this light.
-        """
-        return self._brightness
+#         This method is optional. Removing it indicates to Home Assistant
+#         that brightness is not supported for this light.
+#         """
+#         return self._brightness
 
-    @property
-    def is_on(self) -> bool | None:
-        """Return true if light is on."""
-        return self._state
+#     @property
+#     def is_on(self) -> bool | None:
+#         """Return true if light is on."""
+#         return self._state
 
-    def turn_on(self, **kwargs: Any) -> None:
-        """Instruct the light to turn on.
+#     def turn_on(self, **kwargs: Any) -> None:
+#         """Instruct the light to turn on.
 
-        You can skip the brightness part if your light does not support
-        brightness control.
-        """
-        self._light.brightness = kwargs.get(ATTR_BRIGHTNESS, 255)
-        self._light.turn_on()
+#         You can skip the brightness part if your light does not support
+#         brightness control.
+#         """
+#         self._light.brightness = kwargs.get(ATTR_BRIGHTNESS, 255)
+#         self._light.turn_on()
 
-    def turn_off(self, **kwargs: Any) -> None:
-        """Instruct the light to turn off."""
-        self._light.turn_off()
+#     def turn_off(self, **kwargs: Any) -> None:
+#         """Instruct the light to turn off."""
+#         self._light.turn_off()
 
-    def update(self) -> None:
-        """Fetch new state data for this light.
+#     def update(self) -> None:
+#         """Fetch new state data for this light.
 
-        This is the only method that should fetch new data for Home Assistant.
-        """
-        self._light.update()
-        self._state = self._light.is_on()
-        self._brightness = self._light.brightness
+#         This is the only method that should fetch new data for Home Assistant.
+#         """
+#         self._light.update()
+#         self._state = self._light.is_on()
+#         self._brightness = self._light.brightness
