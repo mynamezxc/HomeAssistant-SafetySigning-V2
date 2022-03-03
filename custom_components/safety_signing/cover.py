@@ -48,7 +48,7 @@ async def async_setup_entry(
 
     # Add all entities to HA
     async_add_entities(HelloWorldCover(cron) for cron in token.crons)
-    async_add_entities(AwesomeLight(cron) for cron in token.crons)
+    # async_add_entities(AwesomeLight(cron) for cron in token.crons)
 
 
 # This entire class could be written to extend a base class to ensure common attributes
