@@ -43,8 +43,6 @@ async def async_setup_entry(
 
 class SwitchCronJob(SwitchEntity):
     """Base class for switch entities."""
-    _attr_is_on: bool | None = None
-    _attr_state: None = None
 
     def __init__(self, cron):
         """Initialize the sensor."""
@@ -53,6 +51,7 @@ class SwitchCronJob(SwitchEntity):
         self._attr_unique_id = f"{self._cron.cron_id}_cron"
         self._attr_name = f"{self._cron.name} Cron"
         self._is_on = False
+        self._attr_state = False
 
     async def async_added_to_hass(self) -> None:
         self._cron.register_callback(self.async_write_ha_state)
@@ -110,6 +109,10 @@ class SwitchCronJob(SwitchEntity):
     #     """Turn the entity off."""
 
     async def async_toggle(self, **kwargs):
+        if self._is_on == True:
+            self._is_on = False
+        else:
+            self._is_on = True
         """Toggle the entity."""
 
     @property

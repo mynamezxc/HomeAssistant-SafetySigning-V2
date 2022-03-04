@@ -65,7 +65,7 @@ class Crons:
 
         # Some static information about this device
         self.firmware_version = f"0.0.{random.randint(1, 9)}"
-        self.model = "Safety signing schedule action"
+        self.model = "SafetySigning token cron"
 
     @property
     def get_name(self) -> str:
