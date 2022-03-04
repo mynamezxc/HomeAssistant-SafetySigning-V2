@@ -30,7 +30,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     new_devices = []
     for cron in token.crons:
         new_devices.append(BatterySensor(cron))
-        new_devices.append(IlluminanceSensor(cron))
+        # new_devices.append(IlluminanceSensor(cron))
     if new_devices:
         async_add_entities(new_devices)
 
@@ -111,37 +111,37 @@ class BatterySensor(SensorBase):
 
 # This is another sensor, but more simple compared to the battery above. See the
 # comments above for how each field works.
-class IlluminanceSensor(SwitchEntity):
-    """Representation of a Sensor."""
+# class IlluminanceSensor(SwitchEntity):
+#     """Representation of a Sensor."""
 
-    # device_class = DEVICE_CLASS_TIMESTAMP
-    # _attr_unit_of_measurement = ""
+#     # device_class = DEVICE_CLASS_TIMESTAMP
+#     # _attr_unit_of_measurement = ""
 
-    def __init__(self, cron):
-        """Initialize the sensor."""
-        super().__init__(cron)
-        # As per the sensor, this must be a unique value within this domain. This is done
-        # by using the device ID, and appending "_battery"
-        self._attr_unique_id = f"{self._cron.cron_id}_illuminance"
+#     def __init__(self, cron):
+#         """Initialize the sensor."""
+#         super().__init__(cron)
+#         # As per the sensor, this must be a unique value within this domain. This is done
+#         # by using the device ID, and appending "_battery"
+#         self._attr_unique_id = f"{self._cron.cron_id}_illuminance"
 
-        # The name of the entity
-        self._attr_name = f"{self._cron.name} Illuminance"
-        self._is_on = False
+#         # The name of the entity
+#         self._attr_name = f"{self._cron.name} Illuminance"
+#         self._is_on = False
 
-    @property
-    def name(self):
-        """Name of the entity."""
-        return "My Switch"
+#     @property
+#     def name(self):
+#         """Name of the entity."""
+#         return "My Switch"
 
-    @property
-    def is_on(self):
-        """If the switch is currently on or off."""
-        return self._is_on
+#     @property
+#     def is_on(self):
+#         """If the switch is currently on or off."""
+#         return self._is_on
 
-    def turn_on(self, **kwargs):
-        """Turn the switch on."""
-        self._is_on = True
+#     def turn_on(self, **kwargs):
+#         """Turn the switch on."""
+#         self._is_on = True
 
-    def turn_off(self, **kwargs):
-        """Turn the switch off."""
-        self._is_on = False
+#     def turn_off(self, **kwargs):
+#         """Turn the switch off."""
+#         self._is_on = False
