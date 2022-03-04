@@ -13,6 +13,11 @@ from homeassistant.const import (
     # DEVICE_CLASS_ILLUMINANCE,
     PERCENTAGE,
 )
+from homeassistant.components.sensor import (
+    SensorDeviceClass,
+    SensorStateClass,
+)
+from homeassistant.const import TEMP_CELSIUS
 from homeassistant.helpers.entity import Entity
 
 from .const import DOMAIN
@@ -29,7 +34,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     new_devices = []
     for cron in token.crons:
         new_devices.append(BatterySensor(cron))
-        # new_devices.append(IlluminanceSensor(cron))
+        new_devices.append(CronJobSensor(cron))
     if new_devices:
         async_add_entities(new_devices)
 
@@ -72,6 +77,22 @@ class SensorBase(Entity):
         # The opposite of async_added_to_hass. Remove any registered call backs here.
         self._cron.remove_callback(self.async_write_ha_state)
 
+class CronJobSensor(SensorBase):
+    """Representation of a Sensor."""
+
+    _attr_name = "Example Temperature"
+    _attr_native_unit_of_measurement = TEMP_CELSIUS
+    _attr_device_class = SensorDeviceClass.TEMPERATURE
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    def update(self, cron) -> None:
+        """Fetch new state data for the sensor.
+        This is the only method that should fetch new data for Home Assistant.
+        """
+        super().__init__(cron)
+        self._attr_unique_id = f"{self._cron.cron_id}_cronjob"
+        self._attr_name = cron.name
+        self._attr_native_value = 23
 
 class BatterySensor(SensorBase):
     """Representation of a Sensor."""
