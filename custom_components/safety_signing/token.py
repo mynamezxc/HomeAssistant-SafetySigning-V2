@@ -56,7 +56,7 @@ class Crons:
         self._loop = asyncio.get_event_loop()
         self._target_position = 100
         self._current_position = 100
-        self._running = False
+        self._running = "Enabled"
         # Reports if the cron is moving up or down.
         # >0 is up, <0 is down. This very much just for demonstration.
         self.moving = 0
@@ -110,10 +110,16 @@ class Crons:
         self._loop.create_task(self.delayed_update())
 
     async def running_cron(self) -> None:
-        self._running = True
+        self._running = "Enabled"
 
     async def turn_off_cron(self) -> None:
-        self._running = False
+        self._running = "Disabled"
+
+    async def toggle_cron(self) -> None:
+        if self._running == "Enabled":
+            self._running = "Disabled"
+        else:
+            self._running = "Enabled"
 
     async def delayed_update(self) -> None:
         """Publish updates, with a random delay to emulate interaction with device."""

@@ -116,17 +116,17 @@ class BatterySensor(SensorBase):
         """Turn the entity on."""
 
     async def async_turn_off(self, **kwargs):
-        self._is_on = False
+        self._cron.turn_off_cron()
         """Turn the entity off."""
 
     def toggle(self):
         """Return the state of the sensor."""
-        self._cron.running_cron()
+        self._cron.toggle_cron()
 
     @property
     async def async_toggle(self):
         """Return the state of the sensor."""
-        self._cron.running_cron()
+        self._cron.toggle_cron()
 
     # The value of this sensor. As this is a DEVICE_CLASS_BATTERY, this value must be
     # the battery level as a percentage (between 0 and 100)
