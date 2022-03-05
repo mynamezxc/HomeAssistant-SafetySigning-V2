@@ -126,7 +126,7 @@ class Crons:
             }
         }
         requestURL = API_URL + "/autoSign"
-        response = requests.post(requestURL, data=json.dumps(requestBody), headers=requestHeaders)
+        response = await requests.post(requestURL, data=json.dumps(requestBody), headers=requestHeaders)
         if response:
             response = response.json()
             if "status" not in response or response["status"] != 0:
