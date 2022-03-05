@@ -129,7 +129,7 @@ class Crons:
         requestURL = API_URL + "/autoSign"
 
         response = await self.token._hass.async_add_executor_job(
-            requests.post(requestURL, data=json.dumps(requestBody), headers=requestHeaders)
+            lambda: requests.post(requestURL, data=json.dumps(requestBody), headers=requestHeaders)
         )
         
         if response:
