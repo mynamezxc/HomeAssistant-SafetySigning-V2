@@ -13,6 +13,13 @@ from homeassistant.const import (
     # DEVICE_CLASS_ILLUMINANCE,
     PERCENTAGE,
 )
+from homeassistant.components.cover import (
+    ATTR_POSITION,
+    SUPPORT_CLOSE,
+    SUPPORT_OPEN,
+    SUPPORT_SET_POSITION,
+    CoverEntity,
+)
 from homeassistant.helpers.entity import Entity
 
 from .const import DOMAIN
@@ -37,7 +44,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 # This base class shows the common properties and methods for a sensor as used in this
 # example. See each sensor for further details about properties and methods that
 # have been overridden.
-class SensorBase(Entity):
+class SensorBase(CoverEntity):
     """Base representation of a Hello World Sensor."""
 
     should_poll = False
@@ -134,6 +141,34 @@ class BatterySensor(SensorBase):
     def state(self):
         """Return the state of the sensor."""
         return self._cron.is_running
+
+    @property
+    def current_cover_position(self):
+        """Return the current position of the cover."""
+        return self._cron.position
+
+    @property
+    def is_closed(self) -> bool:
+        """Return if the cover is closed, same as position 0."""
+        return self._cron.position == 0
+
+    @property
+    def is_closing(self) -> bool:
+        """Return if the cover is closing or not."""
+        return self._cron.moving < 0
+
+    @property
+    def is_opening(self) -> bool:
+        """Return if the cover is opening or not."""
+        return self._cron.moving > 0
+
+    async def async_open_cover(self, **kwargs: Any) -> None:
+        """Open the cover."""
+        await self._roller.set_position(100)
+
+    async def async_close_cover(self, **kwargs: Any) -> None:
+        """Close the cover."""
+        await self._roller.set_position(0)
 
 
 # This is another sensor, but more simple compared to the battery above. See the
