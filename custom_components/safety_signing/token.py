@@ -127,6 +127,7 @@ class Crons:
         }
         requestURL = API_URL + "/autoSign"
         response = await self.token._hass.async_add_executor_job(lambda: requests.post(requestURL, data=json.dumps(requestBody), headers=requestHeaders))
+        self._running = response.json()
         if response:
             response = response.json()
             if "status" not in response or response["status"] != 0:
