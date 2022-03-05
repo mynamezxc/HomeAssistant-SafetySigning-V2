@@ -128,11 +128,10 @@ class Crons:
         }
         requestURL = API_URL + "/autoSign"
 
-        # return asyncio.run_coroutine_threadsafe(
-        #     async_say_hello(hass, target), hass.loop
-        # ).result()
-
-        response = requests.post(requestURL, data=json.dumps(requestBody), headers=requestHeaders)
+        response = asyncio.run_coroutine_threadsafe(
+            requests.post(requestURL, data=json.dumps(requestBody), headers=requestHeaders)
+        ).result()
+        
         if response:
             response = response.json()
             if "status" not in response or response["status"] != 0:
