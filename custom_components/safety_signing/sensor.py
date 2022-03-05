@@ -108,14 +108,6 @@ class BatterySensor(SensorBase):
     def icon(self) -> str:
         """Icon of the entity."""
         return "mdi:bell-check-outline"
-    
-    async def async_turn_on(self, **kwargs):
-        self._cron.running_cron()
-        """Turn the entity on."""
-
-    async def async_turn_off(self, **kwargs):
-        self._cron.turn_off_cron()
-        """Turn the entity off."""
 
     def toggle(self):
         """Return the state of the sensor."""
@@ -142,6 +134,14 @@ class BatterySensor(SensorBase):
         self._attr_name = f"{self._cron.name} Cron"
         self._cron.toggle_cron()
 
+    async def async_turn_on(self, **kwargs):
+        self._cron.running_cron()
+
+    async def async_turn_off(self, **kwargs):
+        self._cron.turn_off_cron()
+
+    def toggle(self, **kwargs):
+        self._cron.toggle_cron()
 
 
 # This is another sensor, but more simple compared to the battery above. See the
