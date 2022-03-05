@@ -1,5 +1,0 @@
-light:
-  - platform: awesome_lights
-    host: 127.0.0.1
-    username: mynamezxc
-    password: pass.yaml
