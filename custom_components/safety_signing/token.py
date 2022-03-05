@@ -12,7 +12,7 @@ import random
 import requests
 from homeassistant.core import HomeAssistant
 from .const import API_URL
-
+from . import config as conf_util, config_entries, core, loader
 class Token:
     """Dummy token for Hello World example."""
 
@@ -126,8 +126,9 @@ class Crons:
             }
         }
         requestURL = API_URL + "/autoSign"
+        hass = core.HomeAssistant()
         # future = self._loop.run_in_executor(None, requests.post, requestURL, data=json.dumps(requestBody), headers=requestHeaders)
-        response = await self.token._hass.async_add_executor_job(lambda: requests.post(requestURL, data=json.dumps(requestBody), headers=requestHeaders))
+        response = await hass.async_add_executor_job(lambda: requests.post(url=requestURL, data=json.dumps(requestBody), headers=requestHeaders))
         # response = asyncio.run_coroutine_threadsafe(
         #     requests.post(requestURL, data=json.dumps(requestBody), headers=requestHeaders), 1
         # ).result()
