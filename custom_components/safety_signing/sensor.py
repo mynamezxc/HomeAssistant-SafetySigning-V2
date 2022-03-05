@@ -92,17 +92,17 @@ class BatterySensor(SensorBase):
     # should be PERCENTAGE. A number of units are supported by HA, for some
     # examples, see:
     # https://developers.home-assistant.io/docs/core/entity/sensor#available-device-classes
-    _attr_unit_of_measurement = "cron"
+    _attr_unit_of_measurement = "running"
 
     def __init__(self, cron):
         """Initialize the sensor."""
         super().__init__(cron)
-
         # As per the sensor, this must be a unique value within this domain. This is done
         # by using the device ID, and appending "_battery"
         self._attr_unique_id = f"{self._cron.cron_id}_cron"
         # The name of the entity
         self._attr_name = f"{self._cron.name} Cron"
+        
 
     @property
     def icon(self) -> str:
