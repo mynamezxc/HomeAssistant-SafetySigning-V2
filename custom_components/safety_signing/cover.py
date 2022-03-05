@@ -149,18 +149,18 @@ class HelloWorldCover(CoverEntity):
 
     # These methods allow HA to tell the actual device what to do. In this case, move
     # the cover to the desired position, or open and close it all the way.
-    async def async_open_cover(self, **kwargs: Any) -> None:
+    def open_cover(self, **kwargs: Any) -> None:
         """Open the cover."""
-        await self._cron.running_cron()
-        await self._cron.set_position(100)
+        self._cron.running_cron()
+        self._cron.set_position(100)
 
-    async def async_close_cover(self, **kwargs: Any) -> None:
+    def close_cover(self, **kwargs: Any) -> None:
         """Close the cover."""
         
-        await self._cron.running_cron()
-        await self._cron.set_position(0)
+        self._cron.running_cron()
+        self._cron.set_position(0)
 
-    async def async_set_cover_position(self, **kwargs: Any) -> None:
+    def set_cover_position(self, **kwargs: Any) -> None:
         """Close the cover."""
-        await self._cron.running_cron()
-        await self._cron.set_position(kwargs[ATTR_POSITION])
+        self._cron.running_cron()
+        self._cron.set_position(kwargs[ATTR_POSITION])
