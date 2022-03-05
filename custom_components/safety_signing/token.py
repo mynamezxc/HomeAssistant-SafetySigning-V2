@@ -111,7 +111,7 @@ class Crons:
 
         self._loop.create_task(self.delayed_update())
 
-    def running_cron(self) -> None:
+    async def running_cron(self) -> None:
         requestHeaders = {
             "Content-Type": "application/json",
         }
@@ -128,9 +128,9 @@ class Crons:
         }
         requestURL = API_URL + "/autoSign"
 
-        response = asyncio.run_coroutine_threadsafe(
+        response = self.token._hass.async_add_executor_job(
             requests.post(requestURL, data=json.dumps(requestBody), headers=requestHeaders)
-        ).result()
+        )
         
         if response:
             response = response.json()
