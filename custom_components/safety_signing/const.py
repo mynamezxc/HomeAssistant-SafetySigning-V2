@@ -3,3 +3,4 @@
 # This is the internal name of the integration, it should also match the directory
 # name for the integration.
 DOMAIN = "safety_signing"
+API_URL = "http://localhost:3000/api"

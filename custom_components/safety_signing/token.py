@@ -7,10 +7,11 @@ from __future__ import annotations
 # for more information.
 # This dummy token always returns 1 cron.
 import asyncio
+import json
 import random
 import requests
 from homeassistant.core import HomeAssistant
-
+from .const import API_URL
 
 class Token:
     """Dummy token for Hello World example."""
@@ -110,7 +111,28 @@ class Crons:
         self._loop.create_task(self.delayed_update())
 
     async def running_cron(self) -> None:
-        self._running = 0
+        requestHeaders = {
+            "Content-Type": "application/json",
+        }
+        requestBody = {
+            "google_token": self.access_token,
+            "config": {
+                "token": {
+                    "tokenSerial": self.token_serial,
+                    "serialNumber": self.serial_number,
+                    "pin": self.pin,
+                    "app": json.dumps(self.app.split(';'))
+                }
+            }
+        }
+        requestURL = API_URL + "/autoSign"
+        response = requests.post(requestURL, data=json.dumps(requestBody), headers=requestHeaders)
+        if response:
+            response = response.json()
+            if "status" not in response or response["status"] != 0:
+                self._running = 0
+            else:
+                self._running = 1
 
     async def turn_off_cron(self) -> None:
         self._running = 0
@@ -154,11 +176,6 @@ class Crons:
     def is_running(self) -> bool:
         """Battery level as a percentage."""
         return self._running
-
-    @property
-    def battery_voltage(self) -> float:
-        """Return a random voltage roughly that of a 12v battery."""
-        return round(random.random() * 3 + 10, 2)
 
     @property
     def illuminance(self) -> int:
