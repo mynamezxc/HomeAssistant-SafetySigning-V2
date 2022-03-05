@@ -62,7 +62,7 @@ class Crons:
         self.moving = 0
 
         # Some static information about this device
-        self.firmware_version = f"0.0.{random.randint(1, 9)}"
+        self.firmware_version = "0.0.1"
         self.model = "SafetySigning token cron"
 
     @property
