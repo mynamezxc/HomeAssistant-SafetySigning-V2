@@ -117,14 +117,14 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 # comments on `DATA_SCHEMA` for further details.
                 # Set the error on the `name` field, not the entire form.
                 errors["name"] = "invalid_name"
-            except InvalidSerialNumber:
-                errors["serial_number"] = "invalid_serial_number"
             except InvalidTokenSerial:
                 errors["token_serial"] = "invalid_token_serial"
-            except InvalidAccessToken:
-                errors["access_token"] = "invalid_access_token"
+            except InvalidSerialNumber:
+                errors["serial_number"] = "invalid_serial_number"
             except InvalidPin:
                 errors["pin"] = "invalid_pin"
+            except InvalidAccessToken:
+                errors["access_token"] = "invalid_access_token"
             except InvalidApp:
                 errors["app"] = "invalid_app"
             except Exception:  # pylint: disable=broad-except

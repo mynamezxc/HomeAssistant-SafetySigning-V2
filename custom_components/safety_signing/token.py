@@ -56,7 +56,7 @@ class Crons:
         self._loop = asyncio.get_event_loop()
         self._target_position = 100
         self._current_position = 100
-        self._times = 0
+        self._running = True
         # Reports if the cron is moving up or down.
         # >0 is up, <0 is down. This very much just for demonstration.
         self.moving = 0
@@ -109,11 +109,11 @@ class Crons:
 
         self._loop.create_task(self.delayed_update())
 
-    async def running_cron(self) -> bool:
-        self._times = self._times + 1
+    async def running_cron(self) -> None:
+        self._running = True
 
-    async def turn_off_cron(self) -> bool:
-        return False
+    async def turn_off_cron(self) -> None:
+        self._running = False
 
     async def delayed_update(self) -> None:
         """Publish updates, with a random delay to emulate interaction with device."""
@@ -145,9 +145,9 @@ class Crons:
         return random.random() > 0.1
 
     @property
-    def running_times(self) -> int:
+    def is_running(self) -> bool:
         """Battery level as a percentage."""
-        return self._times
+        return self._running
 
     @property
     def battery_voltage(self) -> float:

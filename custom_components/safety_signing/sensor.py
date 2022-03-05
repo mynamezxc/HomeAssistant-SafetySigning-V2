@@ -13,6 +13,10 @@ from homeassistant.const import (
     # DEVICE_CLASS_ILLUMINANCE,
     PERCENTAGE,
 )
+from homeassistant.components.binary_sensor import (
+    BinarySensorDeviceClass,
+    BinarySensorEntity,
+)
 from homeassistant.helpers.entity import Entity
 
 from .const import DOMAIN
@@ -28,7 +32,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     new_devices = []
     for cron in token.crons:
-        new_devices.append(BatterySensor(cron))
+        new_devices.append(CronSensor(cron))
         # new_devices.append(IlluminanceSensor(cron))
     if new_devices:
         async_add_entities(new_devices)
@@ -37,10 +41,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 # This base class shows the common properties and methods for a sensor as used in this
 # example. See each sensor for further details about properties and methods that
 # have been overridden.
-class SensorBase(Entity):
+class SensorBase(BinarySensorEntity):
     """Base representation of a Hello World Sensor."""
 
-    should_poll = False
+    # should_poll = False
 
     def __init__(self, cron):
         """Initialize the sensor."""
@@ -51,9 +55,16 @@ class SensorBase(Entity):
     # as name. If name is returned, this entity will then also become a device in the
     # HA UI.
     @property
-    def device_info(self):
-        """Return information to link this entity with the correct device."""
-        return {"identifiers": {(DOMAIN, self._cron.cron_id)}}
+    def device_info(self) -> DeviceInfo:
+        """Information about this entity/device."""
+        return {
+            "identifiers": {(DOMAIN, self._cron.cron_id)},
+            # If desired, the name for the device could be different to the entity
+            "name": self.name,
+            "sw_version": self._cron.firmware_version,
+            "model": self._cron.model,
+            "manufacturer": self._cron.token.manufacturer,
+        }
 
     # This property is important to let HA know if this entity is online or not.
     # If an entity is offline (return False), the UI will refelect this.
@@ -61,6 +72,11 @@ class SensorBase(Entity):
     def available(self) -> bool:
         """Return True if cron and token is available."""
         return self._cron.online and self._cron.token.online
+
+    @property
+    def current_cover_position(self):
+        """Return the current position of the cover."""
+        return self._cron.position
 
     async def async_added_to_hass(self):
         """Run when this Entity has been added to HA."""
@@ -73,7 +89,7 @@ class SensorBase(Entity):
         self._cron.remove_callback(self.async_write_ha_state)
 
 
-class BatterySensor(SensorBase):
+class CronSensor(SensorBase):
     """Representation of a Sensor."""
 
     # The class of this device. Note the value should come from the homeassistant.const
@@ -85,7 +101,7 @@ class BatterySensor(SensorBase):
     # should be PERCENTAGE. A number of units are supported by HA, for some
     # examples, see:
     # https://developers.home-assistant.io/docs/core/entity/sensor#available-device-classes
-    _attr_unit_of_measurement = "times"
+    # _attr_unit_of_measurement = "minutes ago"
 
     def __init__(self, cron):
         """Initialize the sensor."""
@@ -103,7 +119,7 @@ class BatterySensor(SensorBase):
     @property
     def state(self):
         """Return the state of the sensor."""
-        return self._cron.running_times
+        return self._cron.is_running
 
     @property
     def update(self, cron) -> None:
@@ -111,6 +127,20 @@ class BatterySensor(SensorBase):
         self._attr_unique_id = f"{self._cron.cron_id}_cron"
         self._attr_name = f"{self._cron.name} Cron"
         self._cron.running_cron()
+
+    @property
+    def is_on(self):
+        """Return the status of the sensor."""
+        return self._state == False
+    
+    @property
+    def is_off(self):
+        return self._state == False
+
+    @property
+    def device_class(self):
+        """Return the class of this sensor, from DEVICE_CLASSES."""
+        return BinarySensorDeviceClass.OCCUPANCY
 
 # This is another sensor, but more simple compared to the battery above. See the
 # comments above for how each field works.
