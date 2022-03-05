@@ -86,7 +86,7 @@ class BatterySensor(SensorBase):
     # The class of this device. Note the value should come from the homeassistant.const
     # module. More information on the available devices classes can be seen here:
     # https://developers.home-assistant.io/docs/core/entity/sensor
-    device_class = DEVICE_CLASS_BATTERY
+    # device_class = DEVICE_CLASS_BATTERY
 
     # The unit of measurement for this entity. As it's a DEVICE_CLASS_BATTERY, this
     # should be PERCENTAGE. A number of units are supported by HA, for some
