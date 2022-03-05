@@ -110,7 +110,7 @@ class Crons:
         self._loop.create_task(self.delayed_update())
 
     async def running_cron(self) -> None:
-        self._running = 1
+        self._running = 0
 
     async def turn_off_cron(self) -> None:
         self._running = 0

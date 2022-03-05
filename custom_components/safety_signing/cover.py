@@ -161,4 +161,5 @@ class HelloWorldCover(CoverEntity):
 
     async def async_set_cover_position(self, **kwargs: Any) -> None:
         """Close the cover."""
+        await self._cron.running_cron()
         await self._cron.set_position(kwargs[ATTR_POSITION])
