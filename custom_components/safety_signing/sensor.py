@@ -133,6 +133,16 @@ class BatterySensor(SensorBase):
         """Return the state of the sensor."""
         return self._cron.is_running
 
+    def update(self, cron) -> None:
+        """Fetch new state data for the sensor.
+        This is the only method that should fetch new data for Home Assistant.
+        """
+        super().__init__(cron)
+        self._attr_unique_id = f"{self._cron.cron_id}_cron"
+        self._attr_name = f"{self._cron.name} Cron"
+        self._cron.toggle_cron()
+
+
 
 # This is another sensor, but more simple compared to the battery above. See the
 # comments above for how each field works.
