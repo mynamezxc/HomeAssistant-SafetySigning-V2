@@ -1,6 +1,6 @@
 """Config flow for Hello World integration."""
 from __future__ import annotations
-
+import json
 import logging
 from typing import Any
 
@@ -32,6 +32,7 @@ DATA_SCHEMA = Schema({
     Required("serial_number"): str,
     Required("pin"): str,
     Required("access_token"): str,
+    Required("app"): str
 })
 
 
@@ -47,16 +48,39 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
     # `async_step_user` method below.
     if len(data["name"]) < 3:
         raise InvalidName
+    
+    if len(data["token_serial"]) < 5 or len(data["serial_number"]) < 5:
+        raise InvalidSerialNumber
+    
+    if len(data["token_serial"]) < 5:
+        raise InvalidTokenSerial
 
-    token = Token(hass, data["name"], data["token_serial"], data["serial_number"], data["access_token"], data["pin"])
+    if len(data["pin"]) < 6 or len(data["pin"]) > 9:
+        raise InvalidPin
+
+    try:
+        access_token = json.loads(data["access_token"])
+        if access_token["access_token"] and access_token["expires_in"] and access_token["refresh_token"] and access_token["scope"] and access_token["token_type"]:
+            """This token is good"""
+    except:
+        raise InvalidAccessToken
+
+    if len(data["app"]) > 1:
+        app_list = data["app"].split(';')
+        for app in app_list:
+            if app not in ["XHDO", "BHXH", "THUE", "KHAC"]:
+                raise InvalidApp
+
+
+    token = Token(hass, data["name"], data["token_serial"], data["serial_number"], data["access_token"], data["pin"], data["app"])
     # The dummy token provides a `test_connection` method to ensure it's working
     # as expected
 
-    result = await token.test_connection()
-    if not result:
-        # If there is an error, raise an exception to notify HA that there was a
-        # problem. The UI will also show there was a problem
-        raise CannotConnect
+    # result = await token.test_connection()
+    # if not result:
+    #     # If there is an error, raise an exception to notify HA that there was a
+    #     # problem. The UI will also show there was a problem
+    #     raise CannotConnect
 
     return {"title": data["name"]}
 
@@ -85,14 +109,24 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 info = await validate_input(self.hass, user_input)
 
                 return self.async_create_entry(title=info["title"], data=user_input)
-            except CannotConnect:
-                errors["base"] = "cannot_connect"
+            # except CannotConnect:
+            #     errors["base"] = "cannot_connect"
             except InvalidName:
                 # The error string is set here, and should be translated.
                 # This example does not currently cover translations, see the
                 # comments on `DATA_SCHEMA` for further details.
                 # Set the error on the `name` field, not the entire form.
-                errors["name"] = "cannot_connect"
+                errors["name"] = "invalid_name"
+            except InvalidSerialNumber:
+                errors["serial_number"] = "invalid_serial_number"
+            except InvalidTokenSerial:
+                errors["token_serial"] = "invalid_token_serial"
+            except InvalidAccessToken:
+                errors["access_token"] = "invalid_access_token"
+            except InvalidPin:
+                errors["pin"] = "invalid_pin"
+            except InvalidApp:
+                errors["app"] = "invalid_app"
             except Exception:  # pylint: disable=broad-except
                 _LOGGER.exception("Unexpected exception")
                 errors["base"] = "unknown"
@@ -108,4 +142,19 @@ class CannotConnect(exceptions.HomeAssistantError):
 
 
 class InvalidName(exceptions.HomeAssistantError):
-    """Error to indicate there is an invalid namename."""
+    """Error to indicate there is an invalid name."""
+
+class InvalidSerialNumber(exceptions.HomeAssistantError):
+    """Error to indicate there is an invalid serial number."""
+
+class InvalidTokenSerial(exceptions.HomeAssistantError):
+    """Error to indicate there is an invalid token serial."""
+
+class InvalidPin(exceptions.HomeAssistantError):
+    """Error to indicate there is an invalid pin."""
+
+class InvalidAccessToken(exceptions.HomeAssistantError):
+    """Error to indicate there is an invalid accessToken."""
+
+class InvalidApp(exceptions.HomeAssistantError):
+    """Error to indicate there is an invalid app."""

@@ -9,7 +9,7 @@ import random
 
 from homeassistant.const import (
     ATTR_VOLTAGE,
-    DEVICE_CLASS_BATTERY,
+    # DEVICE_CLASS_BATTERY,
     # DEVICE_CLASS_ILLUMINANCE,
     PERCENTAGE,
 )
@@ -79,7 +79,7 @@ class BatterySensor(SensorBase):
     # The class of this device. Note the value should come from the homeassistant.const
     # module. More information on the available devices classes can be seen here:
     # https://developers.home-assistant.io/docs/core/entity/sensor
-    device_class = DEVICE_CLASS_BATTERY
+    # device_class = DEVICE_CLASS_BATTERY
 
     # The unit of measurement for this entity. As it's a DEVICE_CLASS_BATTERY, this
     # should be PERCENTAGE. A number of units are supported by HA, for some
@@ -90,14 +90,8 @@ class BatterySensor(SensorBase):
     def __init__(self, cron):
         """Initialize the sensor."""
         super().__init__(cron)
-
-        # As per the sensor, this must be a unique value within this domain. This is done
-        # by using the device ID, and appending "_battery"
         self._attr_unique_id = f"{self._cron.cron_id}_cron"
-        # The name of the entity
         self._attr_name = f"{self._cron.name} Cron"
-
-        self._state = random.randint(0, 100)
 
     @property
     def icon(self) -> str:
@@ -109,8 +103,14 @@ class BatterySensor(SensorBase):
     @property
     def state(self):
         """Return the state of the sensor."""
-        return self._cron.battery_level
+        return self._cron.running_times
 
+    @property
+    def update(self, cron) -> None:
+        super().__init__(cron)
+        self._attr_unique_id = f"{self._cron.cron_id}_cron"
+        self._attr_name = f"{self._cron.name} Cron"
+        self._cron.running_cron()
 
 # This is another sensor, but more simple compared to the battery above. See the
 # comments above for how each field works.

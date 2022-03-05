@@ -7,14 +7,20 @@
           "token_serial": "Token serial",
           "serial_number" : "Serial number",
           "access_token": "Google access token (JSON)",
-          "pin": "Pin code"
+          "pin": "Pin code",
+          "app": "App (XHDO;THUE;BHXH)"
         }
       }
     },
     "error": {
       "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
       "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
-      "unknown": "[%key:common::config_flow::error::unknown%]"
+      "invalid_serial_number": "Invalid min length of serial",
+      "invalid_token_serial": "Invalid min length of serial",
+      "invalid_access_token": "Invalid access token must be json object",
+      "invalid_pin": "Invalid pin length must be > 6 and < 8",
+      "invalid_app": "App must be in XHDO,BHXH,THUE,KHAC and and separated by ';'",
+      "unknown": "unknown error"
     },
     "abort": {
       "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"

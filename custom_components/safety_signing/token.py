@@ -8,7 +8,7 @@ from __future__ import annotations
 # This dummy token always returns 1 cron.
 import asyncio
 import random
-
+import requests
 from homeassistant.core import HomeAssistant
 
 
@@ -17,18 +17,19 @@ class Token:
 
     manufacturer = "TS24 Corporation"
 
-    def __init__(self, hass: HomeAssistant, name: str, token_serial: str, serial_number: str, access_token: str, pin: str) -> None:
+    def __init__(self, hass: HomeAssistant, name: str, token_serial: str, serial_number: str, access_token: str, pin: str, app: str) -> None:
         """Init dummy token."""
         self._name = name
         self._token_serial = token_serial
         self._serial_number = serial_number
         self._access_token = access_token
         self._pin = pin
+        self._app = app
         self._hass = hass
         self._id = name.replace(" ", "_").lower()
         key = str(random.randint(11111111, 99999999))
         self.crons = [
-            Crons(f"{self._id}_"+key, f"{self._name}_"+key, self),
+            Crons(f"{self._id}_"+key, f"Schedule Token "+key, self),
         ]
         self.online = True
 
@@ -36,11 +37,6 @@ class Token:
     def token_id(self) -> str:
         """ID for dummy token."""
         return self._id
-
-    async def test_connection(self) -> bool:
-        """Test connectivity to the Dummy token is OK."""
-        await asyncio.sleep(1)
-        return True
 
 
 class Crons:
@@ -55,10 +51,12 @@ class Crons:
         self.serial_number = token._serial_number
         self.access_token = token._access_token
         self.pin = token._pin
+        self.app = token._app
         self._callbacks = set()
         self._loop = asyncio.get_event_loop()
         self._target_position = 100
         self._current_position = 100
+        self._times = 0
         # Reports if the cron is moving up or down.
         # >0 is up, <0 is down. This very much just for demonstration.
         self.moving = 0
@@ -112,7 +110,7 @@ class Crons:
         self._loop.create_task(self.delayed_update())
 
     async def running_cron(self) -> bool:
-        return True
+        self._times = self._times + 1
 
     async def turn_off_cron(self) -> bool:
         return False
@@ -147,9 +145,9 @@ class Crons:
         return random.random() > 0.1
 
     @property
-    def battery_level(self) -> int:
+    def running_times(self) -> int:
         """Battery level as a percentage."""
-        return random.randint(0, 100)
+        return self._times
 
     @property
     def battery_voltage(self) -> float:
