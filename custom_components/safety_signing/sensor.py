@@ -62,31 +62,13 @@ class SensorBase(Entity):
             "manufacturer": self._cron.token.manufacturer,
         }
 
-    # This property is important to let HA know if this entity is online or not.
-    # If an entity is offline (return False), the UI will refelect this.
-    @property
-    def available(self) -> bool:
-        """Return True if cron and token is available."""
-        return self._cron.online and self._cron.token.online
-
-    async def async_added_to_hass(self):
-        """Run when this Entity has been added to HA."""
-        # Sensors should also register callbacks to HA when their state changes
-        self._cron.register_callback(self.async_write_ha_state)
-
-    async def async_will_remove_from_hass(self):
-        """Entity being removed from hass."""
-        # The opposite of async_added_to_hass. Remove any registered call backs here.
-        self._cron.remove_callback(self.async_write_ha_state)
-
-
 class BatterySensor(SensorBase):
     """Representation of a Sensor."""
 
     # The class of this device. Note the value should come from the homeassistant.const
     # module. More information on the available devices classes can be seen here:
     # https://developers.home-assistant.io/docs/core/entity/sensor
-    device_class = DEVICE_CLASS_BATTERY
+    # device_class = DEVICE_CLASS_BATTERY
 
     # The unit of measurement for this entity. As it's a DEVICE_CLASS_BATTERY, this
     # should be PERCENTAGE. A number of units are supported by HA, for some
@@ -125,23 +107,6 @@ class BatterySensor(SensorBase):
         """Return the state of the sensor."""
         return self._cron.is_running
 
-    def update(self, cron) -> None:
-        """Fetch new state data for the sensor.
-        This is the only method that should fetch new data for Home Assistant.
-        """
-        super().__init__(cron)
-        self._attr_unique_id = f"{self._cron.cron_id}_cron"
-        self._attr_name = f"{self._cron.name} Cron"
-        self._cron.toggle_cron()
-
-    async def async_turn_on(self, **kwargs):
-        self._cron.running_cron()
-
-    async def async_turn_off(self, **kwargs):
-        self._cron.turn_off_cron()
-
-    def toggle(self, **kwargs):
-        self._cron.toggle_cron()
 
 
 # This is another sensor, but more simple compared to the battery above. See the
