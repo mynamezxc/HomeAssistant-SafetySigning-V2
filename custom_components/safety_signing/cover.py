@@ -32,7 +32,7 @@ async def async_setup_entry(
     token = hass.data[DOMAIN][config_entry.entry_id]
 
     # Add all entities to HA
-    async_add_entities(HelloWorldCover(cron) for cron in token.crons)
+    async_add_entities(HelloWorldCover(hass, cron) for cron in token.crons)
 
 
 # This entire class could be written to extend a base class to ensure common attributes
@@ -49,9 +49,10 @@ class HelloWorldCover(CoverEntity):
     # device it connected to), then this should be function with an @property decorator.
     supported_features = SUPPORT_SET_POSITION | SUPPORT_OPEN | SUPPORT_CLOSE
 
-    def __init__(self, cron) -> None:
+    def __init__(self, hass, cron) -> None:
         """Initialize the sensor."""
         # Usual setup is done here. Callbacks are added in async_added_to_hass.
+        self._hass = hass
         self._cron = cron
 
         # A unique_id for this entity with in this domain. This means for example if you
@@ -156,7 +157,7 @@ class HelloWorldCover(CoverEntity):
 
     async def async_close_cover(self, **kwargs: Any) -> None:
         """Close the cover."""
-        await self._cron.running_cron()
+        await self._hass.async_add_executor_job(self._cron.running_cron())
         await self._cron.set_position(0)
 
     async def async_set_cover_position(self, **kwargs: Any) -> None:
