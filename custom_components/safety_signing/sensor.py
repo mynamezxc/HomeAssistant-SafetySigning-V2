@@ -225,7 +225,7 @@ class CronSensor(Entity):
 
     entity_description: BinarySensorEntityDescription
     _attr_device_class: DEVICE_CLASS_RUNNING
-    _attr_is_on: bool | None = None
+    _attr_is_on: False
     _attr_state: None = None
 
     @property
