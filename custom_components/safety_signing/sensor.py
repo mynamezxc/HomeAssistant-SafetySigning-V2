@@ -9,7 +9,7 @@ import random
 
 from homeassistant.const import (
     ATTR_VOLTAGE,
-    DEVICE_CLASS_BATTERY,
+    # DEVICE_CLASS_BATTERY,
     # DEVICE_CLASS_ILLUMINANCE,
     PERCENTAGE,
 )
