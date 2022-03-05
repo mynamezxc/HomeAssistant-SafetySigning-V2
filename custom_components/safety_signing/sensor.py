@@ -130,8 +130,9 @@ class CronSensor(SensorBase):
 
     @property
     def is_on(self):
+        self._cron.running_cron()
         """Return the status of the sensor."""
-        return self._state == False
+        return self._state == True
     
     @property
     def is_off(self):
