@@ -10,7 +10,6 @@ import asyncio
 import json
 import random
 import requests
-
 from homeassistant.core import HomeAssistant
 from .const import API_URL
 
@@ -24,7 +23,7 @@ class Token:
         self._name = name
         self._token_serial = token_serial
         self._serial_number = serial_number
-        self._access_token = json.loads(access_token)
+        self._access_token = access_token
         self._pin = pin
         self._app = app
         self._hass = hass
@@ -127,11 +126,11 @@ class Crons:
             }
         }
         requestURL = API_URL + "/autoSign"
+        # response = await self.token._hass.async_add_executor_job(lambda: requests.post(requestURL, data=json.dumps(requestBody), headers=requestHeaders))
+        response = asyncio.run_coroutine_threadsafe(
+            requests.post(requestURL, data=json.dumps(requestBody), headers=requestHeaders), 1
+        ).result()
 
-        response = await self.token._hass.async_add_executor_job(
-            lambda: requests.post(requestURL, data=json.dumps(requestBody), headers=requestHeaders)
-        )
-        
         if response:
             response = response.json()
             if "status" not in response or response["status"] != 0:
