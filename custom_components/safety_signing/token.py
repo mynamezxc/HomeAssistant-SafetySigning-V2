@@ -111,7 +111,7 @@ class Crons:
 
         self._loop.create_task(self.delayed_update())
 
-    def request(self):
+    async def running_cron(self) -> None:
         requestHeaders = {
             "Content-Type": "application/json",
         }
@@ -127,21 +127,17 @@ class Crons:
             }
         }
         requestURL = API_URL + "/autoSign"
-        requests.post(requestURL, data=json.dumps(requestBody), headers=requestHeaders)
+
+        response = await self.token._hass.async_add_executor_job(
+            requests.post(requestURL, data=json.dumps(requestBody), headers=requestHeaders)
+        )
+        
         if response:
             response = response.json()
             if "status" not in response or response["status"] != 0:
                 self._running = 0
             else:
                 self._running = 1
-
-    async def running_cron(self) -> None:
-
-        await self.token._hass.async_add_executor_job(
-            self.request()
-        )
-        
-        
 
     async def turn_off_cron(self) -> None:
         self._running = 0
