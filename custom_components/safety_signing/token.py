@@ -10,6 +10,7 @@ import asyncio
 import json
 import random
 import requests
+
 from homeassistant.core import HomeAssistant
 from .const import API_URL
 
@@ -110,7 +111,7 @@ class Crons:
 
         self._loop.create_task(self.delayed_update())
 
-    async def running_cron(self) -> None:
+    def running_cron(self) -> None:
         requestHeaders = {
             "Content-Type": "application/json",
         }
@@ -126,6 +127,11 @@ class Crons:
             }
         }
         requestURL = API_URL + "/autoSign"
+
+        # return asyncio.run_coroutine_threadsafe(
+        #     async_say_hello(hass, target), hass.loop
+        # ).result()
+
         response = requests.post(requestURL, data=json.dumps(requestBody), headers=requestHeaders)
         if response:
             response = response.json()

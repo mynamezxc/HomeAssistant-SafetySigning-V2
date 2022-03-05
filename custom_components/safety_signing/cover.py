@@ -15,7 +15,6 @@ from homeassistant.components.cover import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-
 from .const import DOMAIN
 
 
@@ -152,15 +151,16 @@ class HelloWorldCover(CoverEntity):
     # the cover to the desired position, or open and close it all the way.
     async def async_open_cover(self, **kwargs: Any) -> None:
         """Open the cover."""
-        await self._cron.running_cron()
+        self._cron.running_cron()
         await self._cron.set_position(100)
 
     async def async_close_cover(self, **kwargs: Any) -> None:
         """Close the cover."""
-        await self._hass.async_add_executor_job(self._cron.running_cron())
+        
+        self._cron.running_cron()
         await self._cron.set_position(0)
 
     async def async_set_cover_position(self, **kwargs: Any) -> None:
         """Close the cover."""
-        await self._cron.running_cron()
+        self._cron.running_cron()
         await self._cron.set_position(kwargs[ATTR_POSITION])
