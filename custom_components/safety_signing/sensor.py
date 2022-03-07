@@ -28,8 +28,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     new_devices = []
     for cron in token.crons:
-        # if cron._installed == False:
-        new_devices.append(BatterySensor(cron))
+        if cron._installed == False:
+            new_devices.append(BatterySensor(cron))
         # new_devices.append(IlluminanceSensor(cron))
     if new_devices:
         async_add_entities(new_devices)
@@ -80,7 +80,7 @@ class BatterySensor(SensorBase):
     def __init__(self, cron):
         """Initialize the sensor."""
         super().__init__(cron)
-        # self._cron.set_installed()
+        self._cron.set_installed()
         # As per the sensor, this must be a unique value within this domain. This is done
         # by using the device ID, and appending "_battery"
         self._attr_unique_id = f"{self._cron.cron_id}_cron"
