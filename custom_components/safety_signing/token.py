@@ -58,7 +58,6 @@ class Crons:
         self._target_position = 100
         self._current_position = 100
         self._running = 1
-        self._installed = False
         # Reports if the cron is moving up or down.
         # >0 is up, <0 is down. This very much just for demonstration.
         self.moving = 0
@@ -91,9 +90,6 @@ class Crons:
     def cron_id(self) -> str:
         """Return ID for cron."""
         return self._id
-
-    def set_installed(self) -> None:
-        self._installed = True
 
     @property
     def position(self):
