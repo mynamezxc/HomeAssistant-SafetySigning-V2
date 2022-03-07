@@ -25,16 +25,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     # This creates each HA object for each platform your device requires.
     # It's done by calling the `async_setup_entry` function in each platform module.
-    # hass.config_entries.async_setup_platforms(entry, PLATFORMS)
+    
     hass.async_create_task(
-        hass.config_entries.async_forward_entry_setup(
-            entry, PLATFORMS[0]
-        )
-    )
-    hass.async_create_task(
-        hass.config_entries.async_forward_entry_setup(
-            entry, PLATFORMS[1]
-        )
+        hass.config_entries.async_setup_platforms(entry, PLATFORMS)
     )
     return True
 
@@ -42,11 +35,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def async_remove_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     """Handle removal of an entry."""
     try:
-        await hass.config_entries.async_forward_entry_unload(
-            config_entry, PLATFORMS[0]
-        )
-        await hass.config_entries.async_forward_entry_unload(
-            config_entry, PLATFORMS[1]
+        await hass.config_entries.async_unload_platforms(
+            config_entry, PLATFORMS
         )
         _LOGGER.info("Successfully removed calendar from the holidays integration")
     except ValueError:
