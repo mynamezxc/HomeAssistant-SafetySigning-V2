@@ -16,7 +16,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Hello World from a config entry."""
     # Store an instance of the "connecting" class that does the work of speaking
     # with your actual devices.
-    if not hass.data.setdefault(DOMAIN, {}).has_key(entry.entry_id):
+    if entry.entry_id not in hass.data.setdefault(DOMAIN, {}).keys():
         hass.data.setdefault(DOMAIN, {})[entry.entry_id] = token.Token(hass, entry.data["name"], entry.data["token_serial"], entry.data["serial_number"], entry.data["access_token"], entry.data["pin"], entry.data["app"])
 
     # This creates each HA object for each platform your device requires.
