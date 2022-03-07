@@ -12,7 +12,7 @@ from homeassistant.components.cover import (
     SUPPORT_SET_POSITION,
     CoverEntity,
 )
-from homeassistant.components.button import ButtonEntity
+from homeassistant.components.light import LightEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -37,7 +37,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 # This entire class could be written to extend a base class to ensure common attributes
 # are kept identical/in sync. It's broken apart here between the Cover and Sensors to
 # be explicit about what is returned, and the comments outline where the overlap is.
-class HelloWorldCover(ButtonEntity):
+class HelloWorldCover(LightEntity):
     """Representation of a dummy Cover."""
 
     def __init__(self, hass, cron) -> None:
@@ -47,6 +47,7 @@ class HelloWorldCover(ButtonEntity):
         self._cron = cron
         self._attr_unique_id = f"{self._cron.cron_id}_button"
         self._attr_name = f"{self._cron.name}_button"
+        self._on = False
 
     async def async_added_to_hass(self) -> None:
         """Run when this Entity has been added to HA."""
@@ -88,5 +89,15 @@ class HelloWorldCover(ButtonEntity):
         return self._cron.online and self._cron.token.online
 
     @property
-    async def async_press(self) -> None:
+    async def async_turn_on(self, **kwargs):
         await self._cron.running_cron()
+        self._on = False
+
+    @property
+    async def async_turn_off(self, **kwargs):
+        """Turn device off."""
+
+    @property
+    def is_on(self):
+        """Return true if the binary sensor is on."""
+        return self._on
