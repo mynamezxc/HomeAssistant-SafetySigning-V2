@@ -58,12 +58,12 @@ class HelloWorldCover(CoverEntity):
         # which is done here by appending "_cover". For more information, see:
         # https://developers.home-assistant.io/docs/entity_registry_index/#unique-id-requirements
         # Note: This is NOT used to generate the user visible Entity ID used in automations.
-        self._attr_unique_id = f"{self._cron.cron_id}_cover"
+        self._attr_unique_id = f"{self._cron.cron_id}_trigger"
 
         # This is the name for this *entity*, the "name" attribute from "device_info"
         # is used as the device name for device screens in the UI. This name is used on
         # entity screens, and used to build the Entity ID that's used is automations etc.
-        self._attr_name = self._cron.name
+        self._attr_name = f"{self._cron.name}_trigger"
 
     async def async_added_to_hass(self) -> None:
         """Run when this Entity has been added to HA."""
@@ -110,6 +110,11 @@ class HelloWorldCover(CoverEntity):
             "model": self._cron.model,
             "manufacturer": self._cron.token.manufacturer,
         }
+
+    @property
+    def icon(self) -> str:
+        """Icon of the entity."""
+        return "mdi:skip-next-circle"
 
     # This property is important to let HA know if this entity is online or not.
     # If an entity is offline (return False), the UI will refelect this.

@@ -93,7 +93,7 @@ class BatterySensor(SensorBase):
     @property
     def icon(self) -> str:
         """Icon of the entity."""
-        return "mdi:bell-check-outline"
+        return "mdi:alarm-light"
 
     def toggle(self):
         """Return the state of the sensor."""
