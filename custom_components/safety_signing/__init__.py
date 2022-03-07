@@ -31,8 +31,26 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             entry, PLATFORMS[0]
         )
     )
+    hass.async_create_task(
+        hass.config_entries.async_forward_entry_setup(
+            entry, PLATFORMS[1]
+        )
+    )
     return True
 
+
+async def async_remove_entry(hass: HomeAssistant, config_entry: ConfigEntry):
+    """Handle removal of an entry."""
+    try:
+        await hass.config_entries.async_forward_entry_unload(
+            config_entry, PLATFORMS[0]
+        )
+        await hass.config_entries.async_forward_entry_unload(
+            config_entry, PLATFORMS[1]
+        )
+        _LOGGER.info("Successfully removed calendar from the holidays integration")
+    except ValueError:
+        pass
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""

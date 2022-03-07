@@ -30,9 +30,8 @@ class Token:
         self._id = name.replace(" ", "_").lower()
         self._installed = False
 
-        key = str(random.randint(11111111, 99999999))
         self.crons = [
-            Crons(f"{self._id}_"+key, f"Schedule {serial_number} {app.replace(';', ',')}", self),
+            Crons(f"{self._id}_"+serial_number, f"Schedule {serial_number} {app.replace(';', ',')}", self),
         ]
         self.online = True
 
