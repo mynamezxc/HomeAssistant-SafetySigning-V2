@@ -51,6 +51,31 @@ class HelloWorldCover(LightEntity):
         self.is_light_on = False
 
     @property
+    def device_info(self) -> DeviceInfo:
+        """Information about this entity/device."""
+        return {
+            "identifiers": {(DOMAIN, self._cron.cron_id)},
+            # If desired, the name for the device could be different to the entity
+            "name": self.name,
+            "sw_version": self._cron.firmware_version,
+            "model": self._cron.model,
+            "manufacturer": self._cron.token.manufacturer,
+        }
+
+    @property
+    def available(self) -> bool:
+        """Return True if cron and token is available."""
+        return self._cron.online and self._cron.token.online
+
+    async def async_added_to_hass(self) -> None:
+        """Run when this Entity has been added to HA."""
+        self._cron.register_callback(self.async_write_ha_state)
+
+    async def async_will_remove_from_hass(self) -> None:
+        """Entity being removed from hass."""
+        self._cron.remove_callback(self.async_write_ha_state)
+    
+    @property
     def is_on(self) -> bool:
         return self.is_light_on
 
