@@ -95,7 +95,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     # changes.
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
 
-    async def async_step_user(self, user_input=None):
+    async def async_step_init(self, user_input=None):
         """Handle the initial step."""
         # This goes through the steps to take the user through the setup process.
         # Using this it is possible to update the UI and prompt for additional

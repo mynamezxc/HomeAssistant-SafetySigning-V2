@@ -58,6 +58,7 @@ class Crons:
         self._target_position = 100
         self._current_position = 100
         self._running = 1
+        self.installed = False
         # Reports if the cron is moving up or down.
         # >0 is up, <0 is down. This very much just for demonstration.
         self.moving = 0
