@@ -48,6 +48,11 @@ class HelloWorldCover(LightEntity):
         self._cron = cron
         self._attr_unique_id = f"{self._cron.cron_id}_button"
         self._attr_name = f"{self._cron.name}_button"
+        self.is_light_on = False
+
+    @property
+    def is_on(self) -> bool:
+        return self.is_light_on
 
     @property
     def icon(self) -> str:
@@ -57,7 +62,9 @@ class HelloWorldCover(LightEntity):
     async def async_turn_on(self, **kwargs):
         """Turn device on."""
         if self._cron.is_enable == "on":
+            self.is_light_on = True
             await self._cron.running_cron()
 
     async def async_turn_off(self, **kwargs):
+        self.is_light_on = False
         """Do nothing"""
