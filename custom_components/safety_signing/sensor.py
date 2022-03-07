@@ -102,7 +102,7 @@ class BatterySensor(SensorBase):
     @property
     def state(self):
         """Return the state of the sensor."""
-        return self._cron.is_running
+        return self._cron.is_enable
 
     @property
     def is_on(self):

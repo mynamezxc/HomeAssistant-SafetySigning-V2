@@ -13,6 +13,7 @@ from homeassistant.components.cover import (
     CoverEntity,
 )
 from homeassistant.components.button import ButtonEntity
+from homeassistant.components.light import LightEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -37,7 +38,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 # This entire class could be written to extend a base class to ensure common attributes
 # are kept identical/in sync. It's broken apart here between the Cover and Sensors to
 # be explicit about what is returned, and the comments outline where the overlap is.
-class HelloWorldCover(ButtonEntity):
+class HelloWorldCover(LightEntity):
     """Representation of a dummy Cover."""
 
     def __init__(self, hass, cron) -> None:
@@ -47,46 +48,17 @@ class HelloWorldCover(ButtonEntity):
         self._cron = cron
         self._attr_unique_id = f"{self._cron.cron_id}_button"
         self._attr_name = f"{self._cron.name}_button"
-
-    async def async_added_to_hass(self) -> None:
-        """Run when this Entity has been added to HA."""
-        # Importantly for a push integration, the module that will be getting updates
-        # needs to notify HA of changes. The dummy device has a registercallback
-        # method, so to this we add the 'self.async_write_ha_state' method, to be
-        # called where ever there are changes.
-        # The call back registration is done once this entity is registered with HA
-        # (rather than in the __init__)
-        self._cron.register_callback(self.async_write_ha_state)
-
-    async def async_will_remove_from_hass(self) -> None:
-        """Entity being removed from hass."""
-        # The opposite of async_added_to_hass. Remove any registered call backs here.
-        self._cron.remove_callback(self.async_write_ha_state)
-
-    @property
-    def device_info(self) -> DeviceInfo:
-        """Information about this entity/device."""
-        return {
-            "identifiers": {(DOMAIN, self._cron.cron_id)},
-            # If desired, the name for the device could be different to the entity
-            "name": self.name,
-            "sw_version": self._cron.firmware_version,
-            "model": self._cron.model,
-            "manufacturer": self._cron.token.manufacturer,
-        }
+        self._state = False
 
     @property
     def icon(self) -> str:
         """Icon of the entity."""
         return "mdi:skip-next-circle"
+        
+    async def async_turn_on(self, **kwargs):
+        """Turn device on."""
+        if self._cron.is_enable == "on":
+            await self._cron.running_cron()
 
-    # This property is important to let HA know if this entity is online or not.
-    # If an entity is offline (return False), the UI will refelect this.
-    @property
-    def available(self) -> bool:
-        """Return True if cron and token is available."""
-        return self._cron.online and self._cron.token.online
-
-    @property
-    async def async_press(self) -> None:
-        await self._cron.running_cron()
+    async def async_turn_off(self, **kwargs):
+        """Do nothing"""
