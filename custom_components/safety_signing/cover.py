@@ -81,21 +81,15 @@ class HelloWorldCover(LightEntity):
         """Icon of the entity."""
         return "mdi:skip-next-circle"
 
-    # This property is important to let HA know if this entity is online or not.
-    # If an entity is offline (return False), the UI will refelect this.
-    @property
-    def available(self) -> bool:
-        """Return True if cron and token is available."""
-        return self._cron.online and self._cron.token.online
-
     @property
     async def async_turn_on(self, **kwargs):
         await self._cron.running_cron()
-        self._on = False
+        self._on = True
 
     @property
     async def async_turn_off(self, **kwargs):
         """Turn device off."""
+        self._on = False
 
     @property
     def is_on(self):
