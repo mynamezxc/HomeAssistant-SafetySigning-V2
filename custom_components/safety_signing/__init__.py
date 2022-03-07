@@ -20,17 +20,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.data.setdefault(DOMAIN, {})[entry.entry_id]
     except:
         hass.data.setdefault(DOMAIN, {})[entry.entry_id] = token.Token(hass, entry.data["name"], entry.data["token_serial"], entry.data["serial_number"], entry.data["access_token"], entry.data["pin"], entry.data["app"])
-        hass.config_entries.async_setup_platforms(entry, PLATFORMS)
+        # hass.config_entries.async_setup_platforms(entry, PLATFORMS)
     # hass.data.setdefault(DOMAIN, {})[entry.entry_id] = token.Token(hass, entry.data["name"], entry.data["token_serial"], entry.data["serial_number"], entry.data["access_token"], entry.data["pin"], entry.data["app"]) if entry.entry_id not in hass.data.setdefault(DOMAIN, {}).keys() else False
 
     # This creates each HA object for each platform your device requires.
     # It's done by calling the `async_setup_entry` function in each platform module.
     # hass.config_entries.async_setup_platforms(entry, PLATFORMS)
-    # hass.async_create_task(
-    #     hass.config_entries.async_forward_entry_setup(
-    #         ConfigEntry, "cover"
-    #     )
-    # )
+    hass.async_create_task(
+        hass.config_entries.async_forward_entry_setup(
+            entry, PLATFORMS
+        )
+    )
     return True
 
 
