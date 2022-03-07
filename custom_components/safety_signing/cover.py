@@ -29,7 +29,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     new_devices = []
     if not hass.data[DOMAIN][config_entry.entry_id].installed():
         for cron in token.crons:
-            new_devices.append(HelloWorldCover(cron))
+            new_devices.append(HelloWorldCover(hass, cron))
             # new_devices.append(IlluminanceSensor(cron))
             hass.data[DOMAIN][config_entry.entry_id].set_installed()
     if new_devices:
@@ -68,20 +68,20 @@ class HelloWorldCover(CoverEntity):
         # entity screens, and used to build the Entity ID that's used is automations etc.
         self._attr_name = self._cron.name
 
-    # async def async_added_to_hass(self) -> None:
-    #     """Run when this Entity has been added to HA."""
-    #     # Importantly for a push integration, the module that will be getting updates
-    #     # needs to notify HA of changes. The dummy device has a registercallback
-    #     # method, so to this we add the 'self.async_write_ha_state' method, to be
-    #     # called where ever there are changes.
-    #     # The call back registration is done once this entity is registered with HA
-    #     # (rather than in the __init__)
-    #     self._cron.register_callback(self.async_write_ha_state)
+    async def async_added_to_hass(self) -> None:
+        """Run when this Entity has been added to HA."""
+        # Importantly for a push integration, the module that will be getting updates
+        # needs to notify HA of changes. The dummy device has a registercallback
+        # method, so to this we add the 'self.async_write_ha_state' method, to be
+        # called where ever there are changes.
+        # The call back registration is done once this entity is registered with HA
+        # (rather than in the __init__)
+        self._cron.register_callback(self.async_write_ha_state)
 
-    # async def async_will_remove_from_hass(self) -> None:
-    #     """Entity being removed from hass."""
-    #     # The opposite of async_added_to_hass. Remove any registered call backs here.
-    #     self._cron.remove_callback(self.async_write_ha_state)
+    async def async_will_remove_from_hass(self) -> None:
+        """Entity being removed from hass."""
+        # The opposite of async_added_to_hass. Remove any registered call backs here.
+        self._cron.remove_callback(self.async_write_ha_state)
 
     # Information about the devices that is partially visible in the UI.
     # The most critical thing here is to give this entity a name so it is displayed
