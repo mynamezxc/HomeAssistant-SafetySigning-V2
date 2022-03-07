@@ -48,13 +48,12 @@ class HelloWorldCover(LightEntity):
         self._cron = cron
         self._attr_unique_id = f"{self._cron.cron_id}_button"
         self._attr_name = f"{self._cron.name}_button"
-        self._state = False
 
     @property
     def icon(self) -> str:
         """Icon of the entity."""
         return "mdi:skip-next-circle"
-        
+
     async def async_turn_on(self, **kwargs):
         """Turn device on."""
         if self._cron.is_enable == "on":
