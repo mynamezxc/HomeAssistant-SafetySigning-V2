@@ -86,8 +86,8 @@ class HelloWorldCover(LightEntity):
 
     async def async_turn_on(self, **kwargs):
         """Turn device on."""
-        if self._cron.is_enable:
-            self.is_light_on = True
+        self.is_light_on = True
+        if self._cron.is_enable == "on":
             await self._cron.running_cron()
 
     async def async_turn_off(self, **kwargs):
