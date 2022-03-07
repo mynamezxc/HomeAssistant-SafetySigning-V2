@@ -81,7 +81,6 @@ class BatterySensor(SensorBase):
     def __init__(self, cron):
         """Initialize the sensor."""
         super().__init__(cron)
-        self._cron.set_installed()
         # As per the sensor, this must be a unique value within this domain. This is done
         # by using the device ID, and appending "_battery"
         self._attr_unique_id = f"{self._cron.cron_id}_cron"
