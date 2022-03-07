@@ -22,8 +22,8 @@ from .const import DOMAIN
 # Note how both entities for each cron sensor (cron sensor and cover) are added at
 # the same time to the same list. This way only a single async_add_devices call is
 # required.
-async def async_setup_entry(hass, config_entry, async_add_entities):
-    """Add sensors for passed config_entry in HA."""
+def setup_platform(hass, config_entry, add_entities):
+    """Set up the Coinbase sensors."""
     token = hass.data[DOMAIN][config_entry.entry_id]
 
     new_devices = []
@@ -33,7 +33,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             # new_devices.append(IlluminanceSensor(cron))
             hass.data[DOMAIN][config_entry.entry_id].set_installed()
     if new_devices:
-        async_add_entities(new_devices)
+        add_entities(new_devices)
 
 
 # This base class shows the common properties and methods for a sensor as used in this
