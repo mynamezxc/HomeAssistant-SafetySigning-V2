@@ -23,6 +23,8 @@ from .const import DOMAIN
 # the same time to the same list. This way only a single async_add_devices call is
 # required.
 
+# async def async_remove_entry(hass, entry) -> None:
+
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Add sensors for passed config_entry in HA."""
     token = hass.data[DOMAIN][config_entry.entry_id]
