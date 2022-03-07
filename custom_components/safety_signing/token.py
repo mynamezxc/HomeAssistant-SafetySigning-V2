@@ -28,6 +28,8 @@ class Token:
         self._app = app
         self._hass = hass
         self._id = name.replace(" ", "_").lower()
+        self._installed = False
+
         key = str(random.randint(11111111, 99999999))
         self.crons = [
             Crons(f"{self._id}_"+key, f"Schedule {serial_number} {app.replace(';', ',')}", self),
@@ -39,6 +41,11 @@ class Token:
         """ID for dummy token."""
         return self._id
 
+    def installed(self) -> None:
+        return self._installed
+
+    def set_installed(self) -> None:
+        self._installed = True
 
 class Crons:
     """Dummy cron (device for HA) for Hello World example."""
@@ -58,7 +65,6 @@ class Crons:
         self._target_position = 100
         self._current_position = 100
         self._running = 1
-        self._installed = False
         # Reports if the cron is moving up or down.
         # >0 is up, <0 is down. This very much just for demonstration.
         self.moving = 0
@@ -91,9 +97,6 @@ class Crons:
     def cron_id(self) -> str:
         """Return ID for cron."""
         return self._id
-
-    def set_installed(self) -> None:
-        self._installed = True
 
     @property
     def position(self):

@@ -27,10 +27,12 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     token = hass.data[DOMAIN][config_entry.entry_id]
 
     new_devices = []
-    for cron in token.crons:
-        if cron._installed == False:
+    if not token.installed():
+        for cron in token.crons:
             new_devices.append(BatterySensor(cron))
-        # new_devices.append(IlluminanceSensor(cron))
+            # new_devices.append(IlluminanceSensor(cron))
+        token.set_installed()
+        hass.data[DOMAIN][config_entry.entry_id] = token
     if new_devices:
         async_add_entities(new_devices)
 
