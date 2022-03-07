@@ -20,27 +20,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.data.setdefault(DOMAIN, {})[entry.entry_id]
     except:
         hass.data.setdefault(DOMAIN, {})[entry.entry_id] = token.Token(hass, entry.data["name"], entry.data["token_serial"], entry.data["serial_number"], entry.data["access_token"], entry.data["pin"], entry.data["app"])
-        # hass.config_entries.async_setup_platforms(entry, PLATFORMS)
+
     # hass.data.setdefault(DOMAIN, {})[entry.entry_id] = token.Token(hass, entry.data["name"], entry.data["token_serial"], entry.data["serial_number"], entry.data["access_token"], entry.data["pin"], entry.data["app"]) if entry.entry_id not in hass.data.setdefault(DOMAIN, {}).keys() else False
 
     # This creates each HA object for each platform your device requires.
     # It's done by calling the `async_setup_entry` function in each platform module.
-    
-    hass.async_create_task(
-        hass.config_entries.async_setup_platforms(entry, PLATFORMS)
-    )
+    hass.config_entries.async_setup_platforms(entry, PLATFORMS)
+    # hass.async_create_task(
+    #     hass.config_entries.async_forward_entry_setup(
+    #         ConfigEntry, "cover"
+    #     )
+    # )
     return True
 
-
-async def async_remove_entry(hass: HomeAssistant, config_entry: ConfigEntry):
-    """Handle removal of an entry."""
-    try:
-        await hass.config_entries.async_unload_platforms(
-            config_entry, PLATFORMS
-        )
-        _LOGGER.info("Successfully removed calendar from the holidays integration")
-    except ValueError:
-        pass
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
